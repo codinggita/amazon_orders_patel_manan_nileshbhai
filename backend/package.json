@@ -1,14 +1,21 @@
 {
-  "name": "backend",
+  "name": "amazon-ecommerce-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Amazon-style E-Commerce Backend API",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon",
+    "start:prod": "node src/server.js",
+    "health": "node -e \"fetch('http://localhost:'+(process.env.PORT||5000)+'/api/v1/health').then(r=>r.json()).then(console.log).catch(console.error)\""
   },
+  "keywords": ["ecommerce", "api", "express", "mongodb"],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
