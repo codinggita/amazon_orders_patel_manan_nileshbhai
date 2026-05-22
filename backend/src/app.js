@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 // Routes
 import healthRoutes from './routes/health.routes.js';
 import orderRoutes from './routes/order.routes.js';
+import searchRoutes from './routes/search.routes.js';
 
 // Middlewares
 import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js';
@@ -45,6 +46,9 @@ app.use('/api/', limiter);
 
 // Health Check Route
 app.use('/api/v1/health', healthRoutes);
+
+// Search Routes (Must be before Order Routes to avoid /:orderId matching)
+app.use('/api/v1/orders/search', searchRoutes);
 
 // Order Routes
 app.use('/api/v1/orders', orderRoutes);
