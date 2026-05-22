@@ -1,8 +1,18 @@
-import { Router } from "express";
-import { getHealth } from "../controllers/health.controller.js";
+import { Router } from 'express';
 
 const router = Router();
 
-router.get("/", getHealth);
+/**
+ * Health Check Route
+ * @route GET /api/v1/health
+ */
+router.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
 
 export default router;

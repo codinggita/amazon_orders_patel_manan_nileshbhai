@@ -1,49 +1,38 @@
-import dotenv from "dotenv";
+/**
+ * Environment Configuration
+ * Centralizes all environment variables
+ */
 
-// Load .env before any other module reads process.env
-dotenv.config({ quiet: true });
+export const config = {
+  // Server
+  PORT: process.env.PORT || 5000,
+  NODE_ENV: process.env.NODE_ENV || 'development',
 
-const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET"];
+  // Database
+  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/amazon-ecommerce',
 
-const getEnv = (key, defaultValue) => {
-  const value = process.env[key] ?? defaultValue;
-  if (value === undefined || value === "") {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
-  return value;
+  // CORS
+  CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
+
+  // JWT
+  JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+  JWT_EXPIRE: process.env.JWT_EXPIRE || '7d',
+
+  // API
+  API_VERSION: 'v1',
+  API_PREFIX: '/api/v1',
+
+  // Pagination
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 10,
+  MAX_LIMIT: 100,
+
+  // Logging
+  LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+
+  // Rate Limiting
+  RATE_LIMIT_WINDOW: 15 * 60 * 1000, // 15 minutes
+  RATE_LIMIT_MAX: 100,
 };
 
-// Support legacy MONGO_URI from existing .env files
-const mongodbUri =
-  process.env.MONGODB_URI?.trim() ||
-  process.env.MONGO_URI?.trim();
-
-if (!mongodbUri) {
-  throw new Error(
-    "Missing MongoDB URI. Set MONGODB_URI (or MONGO_URI) in your .env file."
-  );
-}
-
-for (const key of requiredEnvVars) {
-  if (key === "MONGODB_URI") continue;
-  if (!process.env[key]?.trim()) {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
-}
-
-const env = {
-  nodeEnv: process.env.NODE_ENV || "development",
-  port: Number(process.env.PORT) || 5000,
-  mongodbUri,
-  jwtSecret: getEnv("JWT_SECRET"),
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
-  rateLimit: {
-    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-  },
-  isDevelopment: (process.env.NODE_ENV || "development") === "development",
-  isProduction: process.env.NODE_ENV === "production",
-};
-
-export default env;
+export default config;

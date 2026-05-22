@@ -1,53 +1,22 @@
-import mongoose from "mongoose";
-import env from "./env.js";
+import mongoose from 'mongoose';
 
 /**
- * Mongoose connection event listeners for observability in production.
+ * Database Configuration
+ * Handles MongoDB connection
  */
-const registerConnectionEvents = () => {
-  mongoose.connection.on("connected", () => {
-    console.log("Mongoose connected to MongoDB");
-  });
 
-  mongoose.connection.on("error", (err) => {
-    console.error("Mongoose connection error:", err.message);
-  });
-
-  mongoose.connection.on("disconnected", () => {
-    console.warn("Mongoose disconnected from MongoDB");
-  });
-};
-
-/**
- * Reusable MongoDB connection via Mongoose.
- * Call once at startup before accepting HTTP traffic.
- */
 const connectDB = async () => {
   try {
-    registerConnectionEvents();
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/amazon-ecommerce';
 
-    const conn = await mongoose.connect(env.mongodbUri, {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
+    const connection = await mongoose.connect(mongoURI);
 
-    console.log(`MongoDB connected: ${conn.connection.host}`);
-    console.log(`Database name: ${conn.connection.name}`);
-    return conn;
+    console.log(`MongoDB connected: ${connection.connection.host}`);
+    return connection;
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
+    console.error('MongoDB connection error:', error.message);
     process.exit(1);
   }
-};
-
-/** Graceful disconnect for shutdown hooks */
-export const disconnectDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    return;
-  }
-  await mongoose.connection.close();
-  console.log("MongoDB connection closed");
 };
 
 export default connectDB;

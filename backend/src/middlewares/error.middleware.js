@@ -1,60 +1,50 @@
-import env from "../config/env.js";
+import ApiError from '../utils/ApiError.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 /**
- * Centralized error handler — single place for HTTP error responses.
+ * 404 Not Found Handler
  */
-const errorHandler = (err, req, res, next) => {
-  let statusCode = err.statusCode || 500;
-  let message = err.message || "Internal Server Error";
-  let errors = err.errors || [];
-
-  // Mongoose: invalid ObjectId
-  if (err.name === "CastError") {
-    statusCode = 400;
-    message = `Invalid ${err.path}: ${err.value}`;
-  }
-
-  // Mongoose: duplicate key
-  if (err.code === 11000) {
-    statusCode = 409;
-    const field = Object.keys(err.keyValue || {})[0] || "field";
-    message = `Duplicate value for ${field}`;
-  }
-
-  // Mongoose: validation errors
-  if (err.name === "ValidationError") {
-    statusCode = 400;
-    errors = Object.values(err.errors).map((e) => ({
-      field: e.path,
-      message: e.message,
-    }));
-    message = "Validation failed";
-  }
-
-  // JWT errors (ready for auth module)
-  if (err.name === "JsonWebTokenError") {
-    statusCode = 401;
-    message = "Invalid token";
-  }
-
-  if (err.name === "TokenExpiredError") {
-    statusCode = 401;
-    message = "Token expired";
-  }
-
-  const response = {
-    success: false,
-    statusCode,
-    message,
-    ...(errors.length > 0 && { errors }),
-    ...(env.isDevelopment && { stack: err.stack }),
-  };
-
-  if (env.isDevelopment) {
-    console.error(err);
-  }
-
-  res.status(statusCode).json(response);
+const notFoundHandler = (req, res, next) => {
+  const error = new ApiError(404, `Route not found: ${req.originalUrl}`);
+  next(error);
 };
 
-export default errorHandler;
+/**
+ * Global Error Handler
+ * Must be the last middleware in app.js
+ */
+const errorHandler = (error, req, res, next) => {
+  let apiError = error;
+
+  // If error is not already an ApiError, convert it
+  if (!(error instanceof ApiError)) {
+    const statusCode = error.statusCode || 500;
+    const message = error.message || 'Internal Server Error';
+    apiError = new ApiError(statusCode, message);
+  }
+
+  // Log error for debugging
+  if (process.env.NODE_ENV !== 'production') {
+    console.error({
+      statusCode: apiError.statusCode,
+      message: apiError.message,
+      errors: apiError.errors,
+      stack: apiError.stack,
+    });
+  }
+
+  // Send error response
+  const response = new ApiResponse(
+    apiError.statusCode,
+    null,
+    apiError.message
+  );
+
+  if (apiError.errors) {
+    response.errors = apiError.errors;
+  }
+
+  res.status(apiError.statusCode).json(response);
+};
+
+export { errorHandler, notFoundHandler };
