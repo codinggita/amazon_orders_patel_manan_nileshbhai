@@ -295,6 +295,17 @@ const validateQueryParams = [
 ];
 
 /**
+ * Validate search query parameter (q)
+ */
+const validateSearchQuery = [
+  query('q')
+    .optional()
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .withMessage('Search query (q) must be between 1 and 200 characters'),
+];
+
+/**
  * Validate Cancel Order Request
  */
 const validateCancelOrder = [
@@ -345,6 +356,7 @@ export {
   validateUpdateOrder,
   validateOrderId,
   validateQueryParams,
+  validateSearchQuery,
   validateCancelOrder,
   validateUpdateStatus,
   handleValidationErrors,
