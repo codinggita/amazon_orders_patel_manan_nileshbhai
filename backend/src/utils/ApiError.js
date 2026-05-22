@@ -1,20 +1,23 @@
 /**
- * Operational errors thrown from controllers/services.
- * Passed to the global error handler via next(error).
+ * ApiError Class
+ * Custom error class for API error responses
  */
 class ApiError extends Error {
-  constructor(statusCode, message = "Something went wrong", errors = [], stack = "") {
+  constructor(statusCode, message, errors = null) {
     super(message);
     this.statusCode = statusCode;
-    this.message = message;
     this.errors = errors;
-    this.isOperational = true;
+    this.data = null;
+  }
 
-    if (stack) {
-      this.stack = stack;
-    } else {
-      Error.captureStackTrace(this, this.constructor);
-    }
+  toJSON() {
+    return {
+      success: false,
+      statusCode: this.statusCode,
+      message: this.message,
+      errors: this.errors,
+      data: this.data,
+    };
   }
 }
 
