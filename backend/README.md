@@ -134,6 +134,32 @@ curl "http://localhost:5000/api/v1/orders/search/customer?q=john"
 curl "http://localhost:5000/api/v1/orders/search/autocomplete?q=iph"
 ```
 
+### 🎯 Filter API Routes
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/orders/filter/status?type=Pending` | Filter by order status |
+| GET | `/api/v1/orders/filter/payment?method=Card` | Filter by payment method |
+| GET | `/api/v1/orders/filter/category?name=Electronics` | Filter by category |
+| GET | `/api/v1/orders/filter/brand?name=Apple` | Filter by brand |
+| GET | `/api/v1/orders/filter/price?min=100&max=1000` | Filter by price range |
+| GET | `/api/v1/orders/filter/date?start=2025-01-01&end=2025-02-01` | Filter by date range |
+| GET | `/api/v1/orders/filter/country?name=India` | Filter by country |
+| GET | `/api/v1/orders/filter/state?name=Gujarat` | Filter by state |
+| GET | `/api/v1/orders/filter/city?name=Surat` | Filter by city |
+| GET | `/api/v1/orders/filter/high-value?amount=1000` | High value orders |
+| GET | `/api/v1/orders/filter/discounted` | Orders with discount > 0 |
+| GET | `/api/v1/orders/filter/cancelled` | Cancelled orders |
+| GET | `/api/v1/orders/filter/refunded` | Returned/refunded orders |
+| GET | `/api/v1/orders/filter/shipped` | Shipped orders |
+| GET | `/api/v1/orders/filter/delivered` | Delivered orders |
+
+```bash
+curl "http://localhost:5000/api/v1/orders/filter/status?type=Pending"
+curl "http://localhost:5000/api/v1/orders/filter/price?min=100&max=1000"
+curl "http://localhost:5000/api/v1/orders/filter/delivered?page=1&limit=10"
+```
+
 ### 🧪 Quick Test
 
 ```bash
