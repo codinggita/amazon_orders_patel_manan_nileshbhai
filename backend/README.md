@@ -160,6 +160,29 @@ curl "http://localhost:5000/api/v1/orders/filter/price?min=100&max=1000"
 curl "http://localhost:5000/api/v1/orders/filter/delivered?page=1&limit=10"
 ```
 
+### 📄 Pagination API Routes
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/orders?page=1&limit=10` | Standard pagination (+ optional filters) |
+| GET | `/api/v1/orders?page=2&limit=20` | Fetch second page |
+| GET | `/api/v1/orders/paged?page=1&limit=50` | Paginated listing (default limit 50) |
+| GET | `/api/v1/orders/infinite?page=1` | Infinite scroll (`hasMore`, `nextPage`) |
+| GET | `/api/v1/orders/recent?page=1&limit=5` | Recent orders by `OrderDate` |
+| GET | `/api/v1/orders/cancelled?page=1&limit=10` | Cancelled orders |
+| GET | `/api/v1/orders/refunded?page=1&limit=10` | Returned/refunded orders |
+| GET | `/api/v1/orders/customer/:customerId?page=1&limit=10` | Customer orders |
+| GET | `/api/v1/orders/product/:productId?page=1&limit=10` | Product orders |
+| GET | `/api/v1/orders/search?q=phone&page=1&limit=20` | Paginated search results |
+
+```bash
+curl "http://localhost:5000/api/v1/orders?page=1&limit=10"
+curl "http://localhost:5000/api/v1/orders/paged?page=1&limit=50"
+curl "http://localhost:5000/api/v1/orders/infinite?page=1&limit=20"
+curl "http://localhost:5000/api/v1/orders/customer/CUST000001?page=1&limit=10"
+curl "http://localhost:5000/api/v1/orders/search?q=phone&page=1&limit=20"
+```
+
 ### 🧪 Quick Test
 
 ```bash

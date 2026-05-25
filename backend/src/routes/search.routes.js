@@ -5,6 +5,10 @@ import {
   validateSearchQuery,
   handleValidationErrors,
 } from '../validations/order.validation.js';
+import {
+  validatePaginatedSearch,
+  handleValidationErrors as handlePaginationErrors,
+} from '../validations/pagination.validation.js';
 
 const router = Router();
 
@@ -22,10 +26,15 @@ const searchMiddlewares = [
 ];
 
 /**
- * @route   GET /api/v1/orders/search?q=laptop
- * @desc    Search orders using keyword (OrderID, customer, product, category, brand)
+ * @route   GET /api/v1/orders/search?q=phone&page=1&limit=20
+ * @desc    Paginated search results (q required)
  */
-router.get('/', searchMiddlewares, searchController.searchOrders);
+router.get(
+  '/',
+  validatePaginatedSearch,
+  handlePaginationErrors,
+  searchController.searchOrders
+);
 
 /**
  * @route   GET /api/v1/orders/search/customer?q=john
