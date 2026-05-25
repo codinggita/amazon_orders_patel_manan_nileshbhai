@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as orderController from '../controllers/order.controller.js';
+import * as paginationController from '../controllers/pagination.controller.js';
 import {
   validateCreateOrder,
   validateUpdateOrder,
@@ -9,6 +10,14 @@ import {
   validateUpdateStatus,
   handleValidationErrors,
 } from '../validations/order.validation.js';
+import {
+  validatePagination,
+  validatePagedListing,
+  validateInfinitePagination,
+  validateCustomerIdParam,
+  validateProductIdParam,
+  handleValidationErrors as handlePaginationErrors,
+} from '../validations/pagination.validation.js';
 
 const router = Router();
 
@@ -26,24 +35,88 @@ const router = Router();
 router.post('/', validateCreateOrder, handleValidationErrors, orderController.createOrder);
 
 /**
- * @route   GET /api/v1/orders
- * @desc    Get all orders with filtering, sorting, and pagination
- * @access  Public
- * @query   {Number} page - Page number (default: 1)
- * @query   {Number} limit - Records per page (default: 10)
- * @query   {String} sort - Sort field (default: -createdAt)
- * @query   {String} search - Search term
- * @query   {String} CustomerName - Filter by customer name
- * @query   {String} ProductName - Filter by product name
- * @query   {String} Category - Filter by category
- * @query   {String} Brand - Filter by brand
- * @query   {String} OrderStatus - Filter by order status
- * @query   {String} PaymentMethod - Filter by payment method
- * @query   {String} Country - Filter by country
- * @query   {String} State - Filter by state
- * @query   {String} City - Filter by city
+ * @route   GET /api/v1/orders?page=1&limit=10
+ * @route   GET /api/v1/orders?page=2&limit=20
+ * @desc    Standard pagination with optional filters
  */
 router.get('/', validateQueryParams, handleValidationErrors, orderController.getAllOrders);
+
+/**
+ * @route   GET /api/v1/orders/paged?page=1&limit=50
+ * @desc    Paginated order listing (default limit 50)
+ */
+router.get(
+  '/paged',
+  validatePagedListing,
+  handlePaginationErrors,
+  paginationController.getPagedListing
+);
+
+/**
+ * @route   GET /api/v1/orders/infinite?page=1
+ * @desc    Infinite scroll pagination (includes hasMore, nextPage)
+ */
+router.get(
+  '/infinite',
+  validateInfinitePagination,
+  handlePaginationErrors,
+  paginationController.getInfiniteScroll
+);
+
+/**
+ * @route   GET /api/v1/orders/recent?page=1&limit=5
+ * @desc    Paginated recent orders (sorted by OrderDate desc)
+ */
+router.get(
+  '/recent',
+  validatePagination,
+  handlePaginationErrors,
+  paginationController.getRecentOrders
+);
+
+/**
+ * @route   GET /api/v1/orders/cancelled?page=1&limit=10
+ * @desc    Paginated cancelled orders
+ */
+router.get(
+  '/cancelled',
+  validatePagination,
+  handlePaginationErrors,
+  paginationController.getCancelledOrders
+);
+
+/**
+ * @route   GET /api/v1/orders/refunded?page=1&limit=10
+ * @desc    Paginated refunded/returned orders
+ */
+router.get(
+  '/refunded',
+  validatePagination,
+  handlePaginationErrors,
+  paginationController.getRefundedOrders
+);
+
+/**
+ * @route   GET /api/v1/orders/customer/:customerId?page=1&limit=10
+ * @desc    Paginated orders for a customer
+ */
+router.get(
+  '/customer/:customerId',
+  validateCustomerIdParam,
+  handlePaginationErrors,
+  paginationController.getOrdersByCustomer
+);
+
+/**
+ * @route   GET /api/v1/orders/product/:productId?page=1&limit=10
+ * @desc    Paginated orders for a product
+ */
+router.get(
+  '/product/:productId',
+  validateProductIdParam,
+  handlePaginationErrors,
+  paginationController.getOrdersByProduct
+);
 
 /**
  * @route   GET /api/v1/orders/:orderId/exists
