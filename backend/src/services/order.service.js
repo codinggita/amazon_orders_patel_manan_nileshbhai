@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import ApiError from '../utils/ApiError.js';
 import mongoose from 'mongoose';
+import { resolveSortParam } from '../utils/sortMapper.js';
 
 /**
  * Order Service
@@ -106,11 +107,13 @@ class OrderService {
         filter.City = { $regex: City, $options: 'i' };
       }
 
+      const resolvedSort = resolveSortParam(sort);
+
       // Pagination options
       const options = {
         page: parseInt(page),
         limit: parseInt(limit),
-        sort,
+        sort: resolvedSort,
         lean: true,
       };
 
@@ -125,6 +128,7 @@ class OrderService {
           limit: result.limit,
           hasNextPage: result.hasNextPage,
           hasPrevPage: result.hasPrevPage,
+          sortApplied: resolvedSort,
         },
       };
     } catch (error) {
