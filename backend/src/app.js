@@ -10,6 +10,7 @@ import orderRoutes from './routes/order.routes.js';
 import searchRoutes from './routes/search.routes.js';
 import filterRoutes from './routes/filter.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
+import statsRoutes from './routes/stats.routes.js';
 
 
 // Middlewares
@@ -58,6 +59,9 @@ app.use('/api/v1/orders/filter', filterRoutes);
 
 // Analytics Routes
 app.use('/api/v1/analytics', analyticsRoutes);
+
+// Statistics Routes
+app.use('/api/v1/stats', statsRoutes);
 
 // Order Routes
 app.use('/api/v1/orders', orderRoutes);
