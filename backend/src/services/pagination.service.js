@@ -1,4 +1,5 @@
 import Order from '../models/Order.js';
+import { resolveSortParam } from '../utils/sortMapper.js';
 
 /**
  * Pagination Service
@@ -19,7 +20,7 @@ class PaginationService {
   async paginateOrders(filter, query, defaults = {}) {
     const page = parseInt(query.page ?? defaults.page ?? 1, 10);
     const limit = parseInt(query.limit ?? defaults.limit ?? 10, 10);
-    const sort = query.sort ?? defaults.sort ?? '-createdAt';
+    const sort = resolveSortParam(query.sort ?? defaults.sort ?? '-createdAt');
 
     const mongoFilter = { ...filter, isArchived: false };
 

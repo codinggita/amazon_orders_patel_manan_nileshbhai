@@ -183,6 +183,40 @@ curl "http://localhost:5000/api/v1/orders/customer/CUST000001?page=1&limit=10"
 curl "http://localhost:5000/api/v1/orders/search?q=phone&page=1&limit=20"
 ```
 
+### ↕️ Sort API Routes
+
+| Method | Endpoint | Maps to |
+|--------|----------|---------|
+| GET | `/api/v1/orders?sort=amount` | `TotalAmount` asc |
+| GET | `/api/v1/orders?sort=-amount` | `TotalAmount` desc |
+| GET | `/api/v1/orders?sort=date` | `OrderDate` asc (oldest) |
+| GET | `/api/v1/orders?sort=-date` | `OrderDate` desc (newest) |
+| GET | `/api/v1/orders?sort=status` | `OrderStatus` |
+| GET | `/api/v1/orders?sort=customer` | `CustomerName` |
+| GET | `/api/v1/orders?sort=city` | `City` |
+| GET | `/api/v1/orders?sort=payment` | `PaymentMethod` |
+| GET | `/api/v1/orders/sort/highest-value` | Highest value first |
+| GET | `/api/v1/orders/sort/lowest-value` | Lowest value first |
+| GET | `/api/v1/orders/sort/latest` | Latest orders |
+| GET | `/api/v1/orders/sort/oldest` | Oldest orders |
+| GET | `/api/v1/orders/sort/most-items` | Most quantity |
+| GET | `/api/v1/orders/sort/least-items` | Least quantity |
+| GET | `/api/v1/orders/sort/discount` | Highest discount |
+
+```bash
+curl "http://localhost:5000/api/v1/orders?sort=-amount&page=1&limit=10"
+curl "http://localhost:5000/api/v1/orders/sort/highest-value?page=1&limit=10"
+```
+
+### 📮 Postman Collection
+
+Import from `postman/` folder:
+
+- `Amazon_Orders_API.postman_collection.json` — **71 requests** across Health, Orders, Pagination, Search, Filter, Sort
+- `Amazon_Orders_Local.postman_environment.json` — local `baseUrl` and variables
+
+See **[postman/POSTMAN.md](./postman/POSTMAN.md)** for import steps and full route tables.
+
 ### 🧪 Quick Test
 
 ```bash

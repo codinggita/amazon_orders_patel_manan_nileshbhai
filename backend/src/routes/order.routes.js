@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as orderController from '../controllers/order.controller.js';
 import * as paginationController from '../controllers/pagination.controller.js';
+import * as sortController from '../controllers/sort.controller.js';
 import {
   validateCreateOrder,
   validateUpdateOrder,
@@ -18,6 +19,7 @@ import {
   validateProductIdParam,
   handleValidationErrors as handlePaginationErrors,
 } from '../validations/pagination.validation.js';
+import { validateSortQuery } from '../validations/sort.validation.js';
 
 const router = Router();
 
@@ -35,11 +37,59 @@ const router = Router();
 router.post('/', validateCreateOrder, handleValidationErrors, orderController.createOrder);
 
 /**
- * @route   GET /api/v1/orders?page=1&limit=10
- * @route   GET /api/v1/orders?page=2&limit=20
- * @desc    Standard pagination with optional filters
+ * @route   GET /api/v1/orders?page=1&limit=10&sort=-amount
+ * @desc    List orders with pagination, filters, and friendly sort (amount, date, status, customer, city, payment)
  */
-router.get('/', validateQueryParams, handleValidationErrors, orderController.getAllOrders);
+router.get(
+  '/',
+  [...validateQueryParams, ...validateSortQuery],
+  handleValidationErrors,
+  orderController.getAllOrders
+);
+
+const sortRouteMiddleware = [validateSortQuery, handleValidationErrors];
+
+/**
+ * @route   GET /api/v1/orders/sort/highest-value
+ * @desc    Highest value orders first (TotalAmount desc)
+ */
+router.get('/sort/highest-value', sortRouteMiddleware, sortController.getHighestValue);
+
+/**
+ * @route   GET /api/v1/orders/sort/lowest-value
+ * @desc    Lowest value orders first
+ */
+router.get('/sort/lowest-value', sortRouteMiddleware, sortController.getLowestValue);
+
+/**
+ * @route   GET /api/v1/orders/sort/latest
+ * @desc    Latest orders first (OrderDate desc)
+ */
+router.get('/sort/latest', sortRouteMiddleware, sortController.getLatest);
+
+/**
+ * @route   GET /api/v1/orders/sort/oldest
+ * @desc    Oldest orders first
+ */
+router.get('/sort/oldest', sortRouteMiddleware, sortController.getOldest);
+
+/**
+ * @route   GET /api/v1/orders/sort/most-items
+ * @desc    Orders with most items (Quantity desc)
+ */
+router.get('/sort/most-items', sortRouteMiddleware, sortController.getMostItems);
+
+/**
+ * @route   GET /api/v1/orders/sort/least-items
+ * @desc    Orders with least items
+ */
+router.get('/sort/least-items', sortRouteMiddleware, sortController.getLeastItems);
+
+/**
+ * @route   GET /api/v1/orders/sort/discount
+ * @desc    Sort by discount amount (highest discount first)
+ */
+router.get('/sort/discount', sortRouteMiddleware, sortController.getByDiscount);
 
 /**
  * @route   GET /api/v1/orders/paged?page=1&limit=50
