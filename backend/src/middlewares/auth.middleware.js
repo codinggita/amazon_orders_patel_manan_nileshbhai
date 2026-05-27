@@ -23,6 +23,10 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
       throw new ApiError(401, 'Invalid user or token');
     }
 
+    if (user.isBanned) {
+      throw new ApiError(403, 'Your account has been banned. Access denied.');
+    }
+
     // Verify if the session exists (has not been logged out or terminated)
     if (decoded.sessionId) {
       const session = await Session.findById(decoded.sessionId);
