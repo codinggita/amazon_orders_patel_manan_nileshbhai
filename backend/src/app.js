@@ -12,6 +12,7 @@ import filterRoutes from './routes/filter.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import statsRoutes from './routes/stats.routes.js';
 import shippingRoutes from './routes/shipping.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 
 // Middlewares
@@ -51,6 +52,9 @@ app.use('/api/', limiter);
 
 // Health Check Route
 app.use('/api/v1/health', healthRoutes);
+
+// Auth Routes
+app.use('/api/v1/auth', authRoutes);
 
 // Search Routes (Must be before Order Routes to avoid /:orderId matching)
 app.use('/api/v1/orders/search', searchRoutes);
