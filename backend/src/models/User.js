@@ -35,6 +35,17 @@ const userSchema = new mongoose.Schema(
       code: String,
       expiresAt: Date,
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+      index: true,
+    },
+    isBanned: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   {
     timestamps: true,
