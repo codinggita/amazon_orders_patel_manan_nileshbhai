@@ -14,6 +14,9 @@ import statsRoutes from './routes/stats.routes.js';
 import shippingRoutes from './routes/shipping.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import bulkRoutes from './routes/bulk.routes.js';
+import errorRoutes from './routes/error.routes.js';
+import validateRoutes from './routes/validate.routes.js';
 
 
 // Middlewares
@@ -75,8 +78,17 @@ app.use('/api/v1/stats', statsRoutes);
 // Shipping Routes
 app.use('/api/v1/shipping', shippingRoutes);
 
+// Bulk Operations Routes (before order routes to avoid /:orderId matching)
+app.use('/api/v1/orders/bulk', bulkRoutes);
+
 // Order Routes
 app.use('/api/v1/orders', orderRoutes);
+
+// Error Simulation Routes
+app.use('/api/v1/errors', errorRoutes);
+
+// Validation Routes
+app.use('/api/v1/validate', validateRoutes);
 
 // 404 Handler
 app.use(notFoundHandler);
