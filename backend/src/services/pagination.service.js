@@ -22,7 +22,7 @@ class PaginationService {
     const limit = parseInt(query.limit ?? defaults.limit ?? 10, 10);
     const sort = resolveSortParam(query.sort ?? defaults.sort ?? '-createdAt');
 
-    const mongoFilter = { ...filter, isArchived: false };
+    const mongoFilter = { ...filter, isArchived: { $ne: true } };
 
     const result = await Order.paginate(mongoFilter, {
       page,

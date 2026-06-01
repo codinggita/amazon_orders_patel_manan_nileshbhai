@@ -189,7 +189,7 @@ class SearchService {
     // Return distinct product names matching the term
     const products = await Order.find({
       ProductName: { $regex: term, $options: 'i' },
-      isArchived: false
+      isArchived: { $ne: true }
     })
     .select('ProductName Category')
     .limit(10)

@@ -202,6 +202,6 @@ orderSchema.pre('save', function () {
   }
 });
 
-const Order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('Order', orderSchema, 'e-commerce');
 
 export default Order;

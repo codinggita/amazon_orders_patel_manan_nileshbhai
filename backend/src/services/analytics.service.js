@@ -10,7 +10,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -38,7 +38,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -91,7 +91,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -126,7 +126,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled'] },
         },
       },
@@ -152,7 +152,7 @@ class AnalyticsService {
   async getOrdersCount() {
     const result = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -191,7 +191,7 @@ class AnalyticsService {
   async getOrdersCancelled() {
     const cancelledStats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -217,7 +217,7 @@ class AnalyticsService {
 
     const trend = await Order.aggregate([
       {
-        $match: { isArchived: false, OrderStatus: 'Cancelled' },
+        $match: { isArchived: { $ne: true }, OrderStatus: 'Cancelled' },
       },
       {
         $group: {
@@ -276,7 +276,7 @@ class AnalyticsService {
   async getOrdersRefunded() {
     const refundedStats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -302,7 +302,7 @@ class AnalyticsService {
 
     const trend = await Order.aggregate([
       {
-        $match: { isArchived: false, OrderStatus: 'Returned' },
+        $match: { isArchived: { $ne: true }, OrderStatus: 'Returned' },
       },
       {
         $group: {
@@ -362,7 +362,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled'] },
         },
       },
@@ -397,7 +397,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -436,7 +436,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -475,7 +475,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -509,7 +509,7 @@ class AnalyticsService {
   async getPaymentsDistribution() {
     const stats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -542,7 +542,7 @@ class AnalyticsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -576,7 +576,7 @@ class AnalyticsService {
   async getReturnsRate() {
     const overallStats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -597,7 +597,7 @@ class AnalyticsService {
 
     const categoryStats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -652,7 +652,7 @@ class AnalyticsService {
   async getDiscountsUsage() {
     const overallStats = await Order.aggregate([
       {
-        $match: { isArchived: false },
+        $match: { isArchived: { $ne: true } },
       },
       {
         $group: {
@@ -683,7 +683,7 @@ class AnalyticsService {
     const categoryDiscounts = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           $expr: { $gt: [{ $toDouble: '$Discount' }, 0] },
         },
       },
