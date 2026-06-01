@@ -1,116 +1,276 @@
-# Amazon E-Commerce Backend API
+# Amazon Orders Dashboard — Backend API Documentation
 
-A robust, scalable, and secure backend API built for an Amazon-style order management and e-commerce system. This RESTful API handles authentication, user management, product cataloging, order processing, complex querying, and analytics.
+Welcome to the comprehensive backend documentation for the **Amazon Orders E-Commerce System**. This backend is built to replicate the scale and functionality of an enterprise-level e-commerce application. It is engineered with **Node.js, Express, and MongoDB**, utilizing modern ES6+ modules, strict validation, centralized error handling, and robust security practices.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 🔗 Live Links & Documentation
 
-- **Runtime:** Node.js (v18+)
-- **Framework:** Express.js 5.2.1
+- **Live API Endpoint:** [https://amazon-orders.onrender.com/api/v1/orders](https://amazon-orders.onrender.com/api/v1/orders)
+- **Postman Documentation:** [View Postman Collection Docs](https://documenter.getpostman.com/view/50840763/2sBXwntsU8#78bc843d-e6ac-48eb-8e5e-4c8c3265ea24)
+
+---
+
+## 📑 Table of Contents
+
+1. [System Architecture & Tech Stack](#1-system-architecture--tech-stack)
+2. [Project Structure Deep Dive](#2-project-structure-deep-dive)
+3. [Environment Variables](#3-environment-variables)
+4. [Database Models & Schemas](#4-database-models--schemas)
+5. [API Routing & Endpoints Detailed Breakdown](#5-api-routing--endpoints-detailed-breakdown)
+6. [Core System Features](#6-core-system-features)
+   - Pagination & Sorting
+   - Security & Authentication
+   - Validation Pipeline
+   - Error Handling
+7. [Standard API Responses](#7-standard-api-responses)
+8. [Scripts & Deployment](#8-scripts--deployment)
+
+---
+
+## 1. System Architecture & Tech Stack
+
+This backend follows a **Model-View-Controller (MVC)** architectural pattern adapted for RESTful APIs (Model-Controller-Route).
+
+### Core Technologies
+- **Runtime:** Node.js (v18.0.0+)
+- **Web Framework:** Express.js (v5.2.1)
 - **Database:** MongoDB
-- **ODM:** Mongoose 9.6.2
-- **Module System:** ES Modules (ESM)
+- **ODM (Object Data Modeling):** Mongoose (v9.6.2)
+
+### Dependencies & Their Purposes
+- **`bcryptjs`**: Cryptographically secures user passwords using salting and hashing.
+- **`jsonwebtoken`**: Issues stateless, cryptographically signed tokens for user sessions (JWT).
+- **`express-validator`**: Provides strict schema-based payload validation at the route level.
+- **`helmet`**: Automatically sets over a dozen essential HTTP security headers (e.g., XSS Protection, NoSniff).
+- **`cors`**: Manages Cross-Origin Resource Sharing rules to safely accept requests from the frontend dashboard.
+- **`express-rate-limit`**: Protects the API from brute-force and DDoS attacks by throttling IPs.
+- **`mongoose-paginate-v2`**: Injects cursor-based and offset-based pagination directly into Mongoose queries.
+- **`morgan`**: Middleware that logs HTTP requests (IP, method, URL, status) to the terminal for debugging.
+- **`dotenv`**: Injects variables from the `.env` file into `process.env`.
 
 ---
 
-## 📦 Core Libraries & Dependencies
+## 2. Project Structure Deep Dive
 
-This project relies on carefully selected packages to ensure security, performance, and maintainability:
-
-### Core Framework & Database
-- **`express` (v5.2.1):** High-performance, minimalist web framework for Node.js.
-- **`mongoose` (v9.6.2):** Elegant MongoDB object modeling providing schema validation and advanced querying.
-- **`mongoose-paginate-v2` (v1.8.0):** Adds robust pagination capabilities directly to Mongoose models.
-
-### Security & Authentication
-- **`bcryptjs` (v3.0.3):** Optimized library for hashing and salting user passwords securely.
-- **`jsonwebtoken` (v9.0.3):** Implementation of JSON Web Tokens (JWT) for stateless authentication and authorization.
-- **`helmet` (v8.1.0):** Secures the Express application by setting various essential HTTP headers.
-- **`cors` (v2.8.6):** Middleware to enable Cross-Origin Resource Sharing for frontend integrations.
-- **`express-rate-limit` (v8.5.1):** Essential basic rate-limiting middleware to prevent brute-force attacks and DDoS.
-
-### Data Validation & Utilities
-- **`express-validator` (v7.3.2):** Powerful middleware for validating and sanitizing incoming request bodies, params, and queries.
-- **`dotenv` (v17.4.2):** Zero-dependency module that loads environment variables from a `.env` file into `process.env`.
-- **`morgan` (v1.10.1):** HTTP request logger middleware for monitoring API usage and debugging.
-
-### Development Tools
-- **`nodemon` (v3.1.14):** Utility that automatically restarts the node application when file changes in the directory are detected.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js version 18.0.0 or higher
-- MongoDB instance (Local or MongoDB Atlas)
-
-### Installation
-
-1. **Clone the repository and navigate to the backend folder:**
-   ```bash
-   cd backend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables:**
-   Copy the `.env.example` file to create your local `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   *Make sure to update `MONGODB_URI` and `JWT_SECRET` in your `.env` file.*
-
-4. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
-
----
-
-## 📂 Project Structure
+The backend directory (`backend/src/`) is meticulously organized by domain concern:
 
 ```text
 backend/
 ├── src/
-│   ├── config/         # Database and environment configurations
-│   ├── controllers/    # Route handlers with business logic
-│   ├── middlewares/    # Custom middlewares (auth, errors, validation)
-│   ├── models/         # Mongoose schemas (User, Order, etc.)
-│   ├── routes/         # Express router definitions
-│   ├── services/       # Reusable service layer logic
-│   ├── utils/          # Helper classes (ApiError, ApiResponse)
-│   ├── validations/    # Express-validator schema rules
-│   ├── app.js          # Express application setup
-│   └── server.js       # Entry point, database connection, and listener
-├── .env.example        # Template for environment variables
-├── package.json        # Dependencies and scripts
-└── README.md           # Project documentation (this file)
+│   ├── config/             # Configuration Singletons
+│   │   ├── db.js           # Mongoose connection logic and retry mechanism
+│   │   └── env.js          # Centralized parsing of process.env variables
+│   │
+│   ├── controllers/        # Business Logic Handlers (The "Brain")
+│   │   ├── admin.controller.js
+│   │   ├── auth.controller.js
+│   │   ├── order.controller.js
+│   │   └── ... (analytics, bulk, filter, search, shipping, stats, etc.)
+│   │
+│   ├── middlewares/        # Express Request Interceptors
+│   │   ├── admin.middleware.js # RBAC: Rejects non-admin users
+│   │   ├── auth.middleware.js  # JWT validation and Session checking
+│   │   └── error.middleware.js # Global catch block for untrapped errors
+│   │
+│   ├── models/             # Mongoose Schemas & Database Entities
+│   │   ├── Order.js        # E-commerce orders with indexing
+│   │   ├── Session.js      # Tracks active JWTs for remote logout
+│   │   └── User.js         # Customers and Admins
+│   │
+│   ├── routes/             # Endpoint Definitions
+│   │   ├── auth.routes.js
+│   │   ├── order.routes.js
+│   │   └── ... (12 modular routers in total)
+│   │
+│   ├── services/           # Reusable Logic (Decoupled from HTTP req/res)
+│   │   ├── analytics.service.js
+│   │   └── shipping.service.js
+│   │
+│   ├── utils/              # Helper Classes
+│   │   ├── ApiError.js     # Standardized error throwing class
+│   │   ├── ApiResponse.js  # Standardized success JSON formatter
+│   │   ├── asyncHandler.js # Wraps async controllers to pass errors to Express
+│   │   └── pagination.js   # Custom pagination logic
+│   │
+│   ├── validations/        # Express-Validator Schemas
+│   │   └── (Corresponding files for auth, order, admin, filter payload validation)
+│   │
+│   ├── app.js              # Express application factory (Mounts middleware & routes)
+│   └── server.js           # The Entry Point (Boots DB, starts port listener)
+│
+├── .env.example            # Boilerplate environment keys
+├── package.json            # Node module manifest
+└── README.md               # You are here
 ```
 
 ---
 
-## 📜 Available Scripts
+## 3. Environment Variables
 
-- `npm run dev`: Starts the server in development mode using `nodemon` (auto-reloads on file changes).
-- `npm start`: Starts the server in production mode using `node`.
-- `npm run health`: Runs a quick CLI health check against the local server to verify it is running and responding.
+To run this backend securely, you need a `.env` file at the root of the `backend/` directory.
+
+| Variable | Type | Default / Example | Purpose |
+|----------|------|-------------------|---------|
+| `PORT` | Number | `5000` | The port the Express server binds to. |
+| `NODE_ENV` | String | `development` | Triggers verbose logging locally or strict behaviors in `production`. |
+| `MONGODB_URI` | URI | `mongodb://localhost:27017/amazon` | Connection string for MongoDB Atlas or local DB. |
+| `JWT_SECRET` | String | (Random string) | Cryptographic key used to sign Auth tokens. DO NOT EXPOSE. |
+| `JWT_EXPIRE` | String | `7d` | Lifespan of an authentication token. |
+| `CORS_ORIGIN` | String | `*` | Allowed origins (e.g., `http://localhost:5173` for Vite frontend). |
 
 ---
 
-## 🌐 API Domains
+## 4. Database Models & Schemas
 
-The API is mounted at `/api/v1` and is divided into several domains:
+The system relies on three highly normalized MongoDB collections:
 
-- **Auth:** `/api/v1/auth` - Login, registration, profile management, and password resets.
-- **Orders:** `/api/v1/orders` - CRUD operations for orders, including infinite scroll and paged listings.
-- **Search & Filters:** `/api/v1/orders/search`, `/api/v1/orders/filter` - Advanced search and multi-criteria filtering.
-- **Analytics & Stats:** `/api/v1/analytics`, `/api/v1/stats` - Data aggregation for dashboards (revenue, top products).
-- **Admin:** `/api/v1/admin` - Protected routes for global user and order management.
-- **Shipping:** `/api/v1/shipping` - Shipment tracking, label generation, and address updates.
+### A. User (`User.js`)
+Handles identity for both Admins and Standard Users.
+- **Fields:** `name`, `email` (indexed, unique), `password` (hashed).
+- **Security:** Pre-save hooks automatically hash passwords using `bcrypt` before writing to the database. Includes methods like `isPasswordCorrect()`.
+- **Status tracking:** `isEmailVerified`, `otp` (for resets), `isBanned`, `role` (`user` vs `admin`).
 
-*(Refer to the Postman Collection for detailed request/response schemas.)*
+### B. Order (`Order.js`)
+The heaviest, most robust model simulating Amazon's supply chain tracking.
+- **Indexing:** Heavily indexed by `CustomerID`, `OrderDate`, `ProductID`, and `OrderStatus` to ensure rapid dashboard loading times.
+- **Data Types:** Uses `mongoose.Decimal128` for financial fields (`UnitPrice`, `Discount`, `Tax`, `TotalAmount`) to prevent floating-point calculation errors.
+- **Audit Logging:** Includes a `statusHistory` array. Every time an order status changes (e.g., "Pending" -> "Shipped"), a pre-save hook records the timestamp and reason.
+
+### C. Session (`Session.js`)
+Tracks active logins to allow users to remotely log out of other devices.
+- **Fields:** `userId`, `token`, `userAgent` (Browser info), `ipAddress`, `expiresAt`.
+
+---
+
+## 5. API Routing & Endpoints Detailed Breakdown
+
+All API routes are prefixed globally with `/api/v1` in `app.js`. The routing is split logically by domain to prevent monolithic file structures.
+
+### 🔐 Authentication (`/api/v1/auth`)
+- `POST /register`: Creates a new user, hashes password.
+- `POST /login`: Issues a JWT and creates a `Session` document.
+- `POST /logout`: Destroys the active session.
+- `GET /profile`: Retrieves the logged-in user's data (requires JWT).
+- `POST /send-otp` / `POST /verify-otp`: Password reset flow.
+
+### 📦 Orders CRUD (`/api/v1/orders`)
+- `POST /`: Submit a new order.
+- `GET /`: Retrieve orders with query-based pagination (`?page=1&limit=10`).
+- `GET /:orderId`: Retrieve a single order.
+- `PATCH /:orderId/status`: Update order status (automatically logs history).
+- `GET /paged` & `/infinite`: Specialized variants for frontend virtualized tables and infinite scroll.
+
+### 🔍 Search & Filters (`/api/v1/orders/search` & `/api/v1/orders/filter`)
+*(Mounted before regular orders to prevent `:orderId` path collisions)*
+- **Search:** Dedicated paths for searching by `customer`, `product`, `location`, or even `autocomplete` and `fuzzy` search strings.
+- **Filter:** Isolate orders by `status` (Delivered, Pending), `payment` type, `price` range, or `date` constraints.
+
+### 📊 Analytics & Stats (`/api/v1/analytics` & `/api/v1/stats`)
+Real-time dashboard data powered by MongoDB Aggregation Pipelines (highly performant).
+- `/revenue/total`, `/revenue/monthly`
+- `/customers/top`, `/products/top-selling`
+- Aggregates massive datasets without crushing Node.js memory.
+
+### 👑 Admin Management (`/api/v1/admin`)
+*(Protected by `verifyJWT` AND `verifyAdmin` middlewares)*
+- `/users`: View all users.
+- `/users/:id/ban`: Instantly block a user from logging in.
+- `/users/:id/role`: Promote a user to admin.
+- `/system/health`: Diagnostics for the dashboard.
+
+### 🚚 Shipping (`/api/v1/shipping`)
+Simulates third-party logistics.
+- `/tracking/:orderId`: Get shipping status.
+- `/create-label`: Generate simulated shipping manifest.
+
+### 📚 Bulk Operations (`/api/v1/orders/bulk`)
+Allows admin dashboard to process thousands of orders at once (e.g., bulk update status to "Shipped").
+
+---
+
+## 6. Core System Features
+
+### Validation Pipeline (express-validator)
+No bad data reaches the controllers or the database. Every endpoint has a schema in the `src/validations/` folder.
+- If a user sends a `quantity` of `-5`, the `express-validator` middleware halts the request immediately, returning a `400 Bad Request` with an array of specific field errors.
+
+### Security & Authentication (JWT)
+1. User logs in.
+2. Server validates password and generates a JWT payload `(userId, sessionId)`.
+3. Server signs token with `JWT_SECRET`.
+4. Frontend sends token in `Authorization: Bearer <token>` header.
+5. `auth.middleware.js` verifies the signature, fetches the User, checks if they are banned, checks if the Session is still active, and binds `req.user` for the controller to use.
+
+### Centralized Error Handling
+Instead of writing `try/catch` in every single controller, we use the custom `asyncHandler` wrapper.
+- If a controller throws an `ApiError(404, "Order not found")`, the `asyncHandler` catches it and forwards it to `error.middleware.js`.
+- The error middleware formats it gracefully into the standardized JSON response.
+
+---
+
+## 7. Standard API Responses
+
+The frontend can expect a 100% predictable JSON shape for every request, generated by the `ApiResponse` and `ApiError` utility classes.
+
+**✅ Success Response Structure:**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Orders retrieved successfully",
+  "data": {
+    "orders": [...]
+  },
+  "pagination": {
+    "totalDocs": 524,
+    "limit": 10,
+    "totalPages": 53,
+    "page": 1,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+
+**❌ Error Response Structure:**
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Validation Failed",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Please provide a valid email address"
+    }
+  ],
+  "data": null
+}
+```
+
+---
+
+## 8. Scripts & Deployment
+
+### Local Development
+```bash
+npm install
+npm run dev
+```
+*(Uses `nodemon` to watch for file changes and restart the server instantly).*
+
+### Production Deployment (e.g., Render, Heroku)
+```bash
+npm install
+npm start
+```
+*(Uses standard `node src/server.js` for optimal memory usage and performance).*
+
+**Troubleshooting Render Deploys:**
+If the server crashes immediately (`Exited with status 1`), it is almost exclusively a Database Connection issue:
+1. Ensure your MongoDB Atlas Cluster **Network Access** allows `0.0.0.0/0` (Render IPs change dynamically).
+2. Ensure you have manually configured `MONGODB_URI` and `JWT_SECRET` in your hosting provider's Environment Variables settings.
+
+---
+*End of Documentation. Developed for the Amazon Orders Full Stack Dashboard Project.*
