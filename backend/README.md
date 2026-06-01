@@ -1,282 +1,116 @@
-# Amazon Orders — Backend API
+# Amazon E-Commerce Backend API
 
-Production-oriented Express + MongoDB API for the **Amazon Orders** full stack project.
-
-> Full project guide (backend + frontend checklist + deadlines): see [`../README.md`](../README.md)
-
-## Prerequisites
-
-- **Node.js** 18+
-- **MongoDB** running locally or a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) connection string
-
-## Quick start
-
-```bash
-cd backend
-npm install
-cp .env.example .env
-# Edit .env — set MONGODB_URI and JWT_SECRET
-npm run dev
-```
-
-Server: `http://localhost:5000`  
-API base: `http://localhost:5000/api/v1`
-
-## Scripts
-
-| Script        | Description                          |
-|---------------|--------------------------------------|
-| `npm run dev` | Start with nodemon (auto-reload)     |
-| `npm start`   | Start production-style (no reload) |
-| `npm run start:prod` | Same as `npm start` (set `NODE_ENV=production` in `.env`) |
-
-## API routes (initialization)
-
-| Method | Path              | Description        |
-|--------|-------------------|--------------------|
-| GET    | `/api/v1`         | API metadata       |
-| GET    | `/api/v1/health`  | Health + DB status |
-
-## Project structure
-
-```
-src/
-├── config/       # env + database
-├── controllers/  # route handlers
-├── middlewares/  # cross-cutting concerns
-├── models/       # Mongoose schemas
-├── routes/       # Express routers
-├── services/     # business logic
-├── validations/  # request validation
-├── utils/        # shared helpers
-├── seed/         # database seeding
-├── app.js        # Express app (no listen)
-└── server.js     # DB connect + HTTP server
-```
-
-## Environment variables
-
-See `.env.example` for all supported variables.
+A robust, scalable, and secure backend API built for an Amazon-style order management and e-commerce system. This RESTful API handles authentication, user management, product cataloging, order processing, complex querying, and analytics.
 
 ---
 
-## 📦 Orders Module (v1.0.0)
+## 🛠️ Tech Stack & Architecture
 
-A complete, production-ready Orders Backend API with 16 endpoints, advanced filtering, pagination, status tracking, and audit trails.
-
-### ✨ Features
-
-- **16 API Endpoints** — Full CRUD + special operations
-- **Advanced Filtering** — Regex search across 4+ fields
-- **Pagination & Sorting** — Configurable, optimized
-- **Status Tracking** — Complete audit trail with history
-- **Soft Delete** — Archive/restore functionality
-- **Invoice Generation** — Structured invoice data
-- **Input Validation** — 50+ validation rules
-- **Error Handling** — Consistent API responses
-- **Database Optimization** — Compound indexes
-- **Security** — Helmet, CORS, rate limiting
-
-### 📚 Documentation
-
-| Document | Purpose |
-|----------|---------|
-| **[QUICK_START.md](./QUICK_START.md)** | 5-minute setup & API reference |
-| **[ORDERS_MODULE_DOCUMENTATION.md](./ORDERS_MODULE_DOCUMENTATION.md)** | Complete 600+ line guide |
-| **[IMPLEMENTATION_REPORT.md](./IMPLEMENTATION_REPORT.md)** | Implementation details |
-
-### 🔌 Orders API Routes
-
-```
-POST   /api/v1/orders                          Create order
-GET    /api/v1/orders                          List with filters, search, pagination
-GET    /api/v1/orders/:orderId                 Get order details
-PUT    /api/v1/orders/:orderId                 Full update
-PATCH  /api/v1/orders/:orderId                 Partial update
-DELETE /api/v1/orders/:orderId                 Delete order
-PATCH  /api/v1/orders/:orderId/status          Update status with history
-PATCH  /api/v1/orders/:orderId/archive         Soft delete
-PATCH  /api/v1/orders/:orderId/restore         Restore archived
-POST   /api/v1/orders/:orderId/cancel          Cancel order
-POST   /api/v1/orders/:orderId/duplicate       Clone order
-GET    /api/v1/orders/:orderId/exists          Check existence
-GET    /api/v1/orders/:orderId/summary         Get summary
-GET    /api/v1/orders/:orderId/items           Get items
-GET    /api/v1/orders/:orderId/history         Get status history
-GET    /api/v1/orders/:orderId/invoice         Generate invoice
-```
-
-### 🔍 Search API Routes
-
-All search endpoints use query param `q` (where applicable) plus optional `page`, `limit`, and `sort`.
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/orders/search?q=laptop` | Keyword search across multiple fields |
-| GET | `/api/v1/orders/search/customer?q=john` | Search by customer name |
-| GET | `/api/v1/orders/search/product?q=iphone` | Search by product name |
-| GET | `/api/v1/orders/search/category?q=electronics` | Search by category |
-| GET | `/api/v1/orders/search/brand?q=samsung` | Search by brand |
-| GET | `/api/v1/orders/search/status?q=delivered` | Search by status |
-| GET | `/api/v1/orders/search/payment?q=upi` | Search by payment method |
-| GET | `/api/v1/orders/search/location?q=delhi` | Search by city, state, or country |
-| GET | `/api/v1/orders/search/date?q=2025-01` | Search by order date |
-| GET | `/api/v1/orders/search/tracking?q=ORD0000001` | Search by order/tracking ID |
-| GET | `/api/v1/orders/search/fuzzy?q=headfone` | Fuzzy search |
-| GET | `/api/v1/orders/search/autocomplete?q=iph` | Autocomplete suggestions |
-| GET | `/api/v1/orders/search/highlight?q=mouse` | Results with highlighted matches |
-| GET | `/api/v1/orders/search/recent` | Recent searches |
-| GET | `/api/v1/orders/search/popular` | Popular searches |
-
-```bash
-curl "http://localhost:5000/api/v1/orders/search?q=laptop&page=1&limit=10"
-curl "http://localhost:5000/api/v1/orders/search/customer?q=john"
-curl "http://localhost:5000/api/v1/orders/search/autocomplete?q=iph"
-```
-
-### 🎯 Filter API Routes
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/orders/filter/status?type=Pending` | Filter by order status |
-| GET | `/api/v1/orders/filter/payment?method=Card` | Filter by payment method |
-| GET | `/api/v1/orders/filter/category?name=Electronics` | Filter by category |
-| GET | `/api/v1/orders/filter/brand?name=Apple` | Filter by brand |
-| GET | `/api/v1/orders/filter/price?min=100&max=1000` | Filter by price range |
-| GET | `/api/v1/orders/filter/date?start=2025-01-01&end=2025-02-01` | Filter by date range |
-| GET | `/api/v1/orders/filter/country?name=India` | Filter by country |
-| GET | `/api/v1/orders/filter/state?name=Gujarat` | Filter by state |
-| GET | `/api/v1/orders/filter/city?name=Surat` | Filter by city |
-| GET | `/api/v1/orders/filter/high-value?amount=1000` | High value orders |
-| GET | `/api/v1/orders/filter/discounted` | Orders with discount > 0 |
-| GET | `/api/v1/orders/filter/cancelled` | Cancelled orders |
-| GET | `/api/v1/orders/filter/refunded` | Returned/refunded orders |
-| GET | `/api/v1/orders/filter/shipped` | Shipped orders |
-| GET | `/api/v1/orders/filter/delivered` | Delivered orders |
-
-```bash
-curl "http://localhost:5000/api/v1/orders/filter/status?type=Pending"
-curl "http://localhost:5000/api/v1/orders/filter/price?min=100&max=1000"
-curl "http://localhost:5000/api/v1/orders/filter/delivered?page=1&limit=10"
-```
-
-### 📄 Pagination API Routes
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/orders?page=1&limit=10` | Standard pagination (+ optional filters) |
-| GET | `/api/v1/orders?page=2&limit=20` | Fetch second page |
-| GET | `/api/v1/orders/paged?page=1&limit=50` | Paginated listing (default limit 50) |
-| GET | `/api/v1/orders/infinite?page=1` | Infinite scroll (`hasMore`, `nextPage`) |
-| GET | `/api/v1/orders/recent?page=1&limit=5` | Recent orders by `OrderDate` |
-| GET | `/api/v1/orders/cancelled?page=1&limit=10` | Cancelled orders |
-| GET | `/api/v1/orders/refunded?page=1&limit=10` | Returned/refunded orders |
-| GET | `/api/v1/orders/customer/:customerId?page=1&limit=10` | Customer orders |
-| GET | `/api/v1/orders/product/:productId?page=1&limit=10` | Product orders |
-| GET | `/api/v1/orders/search?q=phone&page=1&limit=20` | Paginated search results |
-
-```bash
-curl "http://localhost:5000/api/v1/orders?page=1&limit=10"
-curl "http://localhost:5000/api/v1/orders/paged?page=1&limit=50"
-curl "http://localhost:5000/api/v1/orders/infinite?page=1&limit=20"
-curl "http://localhost:5000/api/v1/orders/customer/CUST000001?page=1&limit=10"
-curl "http://localhost:5000/api/v1/orders/search?q=phone&page=1&limit=20"
-```
-
-### ↕️ Sort API Routes
-
-| Method | Endpoint | Maps to |
-|--------|----------|---------|
-| GET | `/api/v1/orders?sort=amount` | `TotalAmount` asc |
-| GET | `/api/v1/orders?sort=-amount` | `TotalAmount` desc |
-| GET | `/api/v1/orders?sort=date` | `OrderDate` asc (oldest) |
-| GET | `/api/v1/orders?sort=-date` | `OrderDate` desc (newest) |
-| GET | `/api/v1/orders?sort=status` | `OrderStatus` |
-| GET | `/api/v1/orders?sort=customer` | `CustomerName` |
-| GET | `/api/v1/orders?sort=city` | `City` |
-| GET | `/api/v1/orders?sort=payment` | `PaymentMethod` |
-| GET | `/api/v1/orders/sort/highest-value` | Highest value first |
-| GET | `/api/v1/orders/sort/lowest-value` | Lowest value first |
-| GET | `/api/v1/orders/sort/latest` | Latest orders |
-| GET | `/api/v1/orders/sort/oldest` | Oldest orders |
-| GET | `/api/v1/orders/sort/most-items` | Most quantity |
-| GET | `/api/v1/orders/sort/least-items` | Least quantity |
-| GET | `/api/v1/orders/sort/discount` | Highest discount |
-
-```bash
-curl "http://localhost:5000/api/v1/orders?sort=-amount&page=1&limit=10"
-curl "http://localhost:5000/api/v1/orders/sort/highest-value?page=1&limit=10"
-```
-
-### 📮 Postman Collection
-
-Import from `postman/` folder:
-
-- `Amazon_Orders_API.postman_collection.json` — **71 requests** across Health, Orders, Pagination, Search, Filter, Sort
-- `Amazon_Orders_Local.postman_environment.json` — local `baseUrl` and variables
-
-See **[postman/POSTMAN.md](./postman/POSTMAN.md)** for import steps and full route tables.
-
-### 🧪 Quick Test
-
-```bash
-# Create order
-curl -X POST http://localhost:5000/api/v1/orders \
-  -H "Content-Type: application/json" \
-  -d @sample-order.json
-
-# List orders
-curl "http://localhost:5000/api/v1/orders?page=1&limit=10&OrderStatus=Delivered"
-
-# Check health
-curl http://localhost:5000/api/v1/health
-```
-
-### 📊 Database Schema
-
-- **23 fields** with proper types (Decimal128 for money)
-- **10 indexes** including compound indexes
-- **2 enums** for PaymentMethod and OrderStatus
-- **Audit trail** with statusHistory
-- **Soft delete** with isArchived flag
-
-### 🚀 Getting Started
-
-```bash
-npm install                    # Install dependencies
-cp .env.example .env          # Setup environment
-npm run dev                   # Start server
-curl http://localhost:5000/api/v1/orders  # Create orders
-```
-
-### 📈 Performance & Scalability
-
-- ✓ Compound database indexes
-- ✓ Pagination for large datasets
-- ✓ Regex search optimization
-- ✓ Rate limiting (100 req/15min)
-- ✓ Stateless design
-- ✓ Horizontal scaling ready
-
-### 🛡️ Security & Best Practices
-
-- ✓ Helmet security headers
-- ✓ CORS protection
-- ✓ Input validation (50+ rules)
-- ✓ Error sanitization
-- ✓ Decimal precision for finances
-- ✓ MVC architecture
-- ✓ Async/await throughout
-
-### 📝 Production-Ready
-
-- ✓ ~1,800 lines of code
-- ✓ 16 fully tested endpoints
-- ✓ 18 service methods
-- ✓ Complete documentation
-- ✓ Sample data provided
-- ✓ Testing guide included
+- **Runtime:** Node.js (v18+)
+- **Framework:** Express.js 5.2.1
+- **Database:** MongoDB
+- **ODM:** Mongoose 9.6.2
+- **Module System:** ES Modules (ESM)
 
 ---
 
-For detailed information, see the **[QUICK_START.md](./QUICK_START.md)** or **[ORDERS_MODULE_DOCUMENTATION.md](./ORDERS_MODULE_DOCUMENTATION.md)**
+## 📦 Core Libraries & Dependencies
+
+This project relies on carefully selected packages to ensure security, performance, and maintainability:
+
+### Core Framework & Database
+- **`express` (v5.2.1):** High-performance, minimalist web framework for Node.js.
+- **`mongoose` (v9.6.2):** Elegant MongoDB object modeling providing schema validation and advanced querying.
+- **`mongoose-paginate-v2` (v1.8.0):** Adds robust pagination capabilities directly to Mongoose models.
+
+### Security & Authentication
+- **`bcryptjs` (v3.0.3):** Optimized library for hashing and salting user passwords securely.
+- **`jsonwebtoken` (v9.0.3):** Implementation of JSON Web Tokens (JWT) for stateless authentication and authorization.
+- **`helmet` (v8.1.0):** Secures the Express application by setting various essential HTTP headers.
+- **`cors` (v2.8.6):** Middleware to enable Cross-Origin Resource Sharing for frontend integrations.
+- **`express-rate-limit` (v8.5.1):** Essential basic rate-limiting middleware to prevent brute-force attacks and DDoS.
+
+### Data Validation & Utilities
+- **`express-validator` (v7.3.2):** Powerful middleware for validating and sanitizing incoming request bodies, params, and queries.
+- **`dotenv` (v17.4.2):** Zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+- **`morgan` (v1.10.1):** HTTP request logger middleware for monitoring API usage and debugging.
+
+### Development Tools
+- **`nodemon` (v3.1.14):** Utility that automatically restarts the node application when file changes in the directory are detected.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js version 18.0.0 or higher
+- MongoDB instance (Local or MongoDB Atlas)
+
+### Installation
+
+1. **Clone the repository and navigate to the backend folder:**
+   ```bash
+   cd backend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Copy the `.env.example` file to create your local `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   *Make sure to update `MONGODB_URI` and `JWT_SECRET` in your `.env` file.*
+
+4. **Start the Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📂 Project Structure
+
+```text
+backend/
+├── src/
+│   ├── config/         # Database and environment configurations
+│   ├── controllers/    # Route handlers with business logic
+│   ├── middlewares/    # Custom middlewares (auth, errors, validation)
+│   ├── models/         # Mongoose schemas (User, Order, etc.)
+│   ├── routes/         # Express router definitions
+│   ├── services/       # Reusable service layer logic
+│   ├── utils/          # Helper classes (ApiError, ApiResponse)
+│   ├── validations/    # Express-validator schema rules
+│   ├── app.js          # Express application setup
+│   └── server.js       # Entry point, database connection, and listener
+├── .env.example        # Template for environment variables
+├── package.json        # Dependencies and scripts
+└── README.md           # Project documentation (this file)
+```
+
+---
+
+## 📜 Available Scripts
+
+- `npm run dev`: Starts the server in development mode using `nodemon` (auto-reloads on file changes).
+- `npm start`: Starts the server in production mode using `node`.
+- `npm run health`: Runs a quick CLI health check against the local server to verify it is running and responding.
+
+---
+
+## 🌐 API Domains
+
+The API is mounted at `/api/v1` and is divided into several domains:
+
+- **Auth:** `/api/v1/auth` - Login, registration, profile management, and password resets.
+- **Orders:** `/api/v1/orders` - CRUD operations for orders, including infinite scroll and paged listings.
+- **Search & Filters:** `/api/v1/orders/search`, `/api/v1/orders/filter` - Advanced search and multi-criteria filtering.
+- **Analytics & Stats:** `/api/v1/analytics`, `/api/v1/stats` - Data aggregation for dashboards (revenue, top products).
+- **Admin:** `/api/v1/admin` - Protected routes for global user and order management.
+- **Shipping:** `/api/v1/shipping` - Shipment tracking, label generation, and address updates.
+
+*(Refer to the Postman Collection for detailed request/response schemas.)*

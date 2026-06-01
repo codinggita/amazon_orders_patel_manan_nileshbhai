@@ -22,7 +22,7 @@ class SortService {
     const limit = parseInt(query.limit ?? 10, 10);
     const sort = sortValue || resolveSortParam(query.sort);
 
-    const filter = { isArchived: false };
+    const filter = { isArchived: { $ne: true } };
 
     const result = await Order.paginate(filter, {
       page,

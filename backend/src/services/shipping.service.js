@@ -17,7 +17,7 @@ class ShippingService {
       throw new ApiError(400, 'Invalid order ID format');
     }
 
-    const order = await Order.findOne({ _id: orderId, isArchived: false });
+    const order = await Order.findOne({ _id: orderId, isArchived: { $ne: true } });
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
@@ -53,7 +53,7 @@ class ShippingService {
     const { page = 1, limit = 10 } = query;
     try {
       const result = await Order.paginate(
-        { OrderStatus: 'Pending', isArchived: false },
+        { OrderStatus: 'Pending', isArchived: { $ne: true } },
         { page: parseInt(page), limit: parseInt(limit), lean: true }
       );
       
@@ -82,7 +82,7 @@ class ShippingService {
     const { page = 1, limit = 10 } = query;
     try {
       const result = await Order.paginate(
-        { OrderStatus: 'Delivered', isArchived: false },
+        { OrderStatus: 'Delivered', isArchived: { $ne: true } },
         { page: parseInt(page), limit: parseInt(limit), lean: true }
       );
       
@@ -111,7 +111,7 @@ class ShippingService {
     const { page = 1, limit = 10 } = query;
     try {
       const result = await Order.paginate(
-        { OrderStatus: 'Returned', isArchived: false },
+        { OrderStatus: 'Returned', isArchived: { $ne: true } },
         { page: parseInt(page), limit: parseInt(limit), lean: true }
       );
       
@@ -143,7 +143,7 @@ class ShippingService {
       throw new ApiError(400, 'Invalid order ID format');
     }
 
-    const order = await Order.findOne({ _id: orderId, isArchived: false });
+    const order = await Order.findOne({ _id: orderId, isArchived: { $ne: true } });
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
@@ -172,7 +172,7 @@ class ShippingService {
       throw new ApiError(400, 'Invalid order ID format');
     }
 
-    const order = await Order.findOne({ _id: orderId, isArchived: false });
+    const order = await Order.findOne({ _id: orderId, isArchived: { $ne: true } });
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
@@ -214,7 +214,7 @@ class ShippingService {
       throw new ApiError(400, 'Invalid order ID format');
     }
 
-    const order = await Order.findOne({ _id: orderId, isArchived: false });
+    const order = await Order.findOne({ _id: orderId, isArchived: { $ne: true } });
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
@@ -235,7 +235,7 @@ class ShippingService {
       .join(', ');
 
     const updatedOrder = await Order.findOneAndUpdate(
-      { _id: orderId, isArchived: false },
+      { _id: orderId, isArchived: { $ne: true } },
       {
         $set: updateFields,
         $push: {
@@ -262,7 +262,7 @@ class ShippingService {
       throw new ApiError(400, 'Invalid order ID format');
     }
 
-    const order = await Order.findOne({ _id: orderId, isArchived: false });
+    const order = await Order.findOne({ _id: orderId, isArchived: { $ne: true } });
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }

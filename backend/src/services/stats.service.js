@@ -6,7 +6,7 @@ class StatsService {
    * 1. Total number of orders
    */
   async getOrdersTotal() {
-    const count = await Order.countDocuments({ isArchived: false });
+    const count = await Order.countDocuments({ isArchived: { $ne: true } });
     return { totalOrders: count };
   }
 
@@ -15,7 +15,7 @@ class StatsService {
    */
   async getOrdersDaily() {
     const stats = await Order.aggregate([
-      { $match: { isArchived: false } },
+      { $match: { isArchived: { $ne: true } } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$OrderDate' } },
@@ -39,7 +39,7 @@ class StatsService {
    */
   async getOrdersMonthly() {
     const stats = await Order.aggregate([
-      { $match: { isArchived: false } },
+      { $match: { isArchived: { $ne: true } } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m', date: '$OrderDate' } },
@@ -63,7 +63,7 @@ class StatsService {
    */
   async getOrdersYearly() {
     const stats = await Order.aggregate([
-      { $match: { isArchived: false } },
+      { $match: { isArchived: { $ne: true } } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y', date: '$OrderDate' } },
@@ -89,7 +89,7 @@ class StatsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -111,7 +111,7 @@ class StatsService {
     const stats = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -140,7 +140,7 @@ class StatsService {
     const stats = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -169,7 +169,7 @@ class StatsService {
     const stats = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           OrderStatus: { $nin: ['Cancelled', 'Returned'] },
         },
       },
@@ -195,7 +195,7 @@ class StatsService {
    * 9. Total products count
    */
   async getProductsCount() {
-    const result = await Order.distinct('ProductID', { isArchived: false });
+    const result = await Order.distinct('ProductID', { isArchived: { $ne: true } });
     return { totalProducts: result.length };
   }
 
@@ -203,7 +203,7 @@ class StatsService {
    * 10. Total customers count
    */
   async getCustomersCount() {
-    const result = await Order.distinct('CustomerID', { isArchived: false });
+    const result = await Order.distinct('CustomerID', { isArchived: { $ne: true } });
     return { totalCustomers: result.length };
   }
 
@@ -211,7 +211,7 @@ class StatsService {
    * 11. Total categories count
    */
   async getCategoriesCount() {
-    const result = await Order.distinct('Category', { isArchived: false });
+    const result = await Order.distinct('Category', { isArchived: { $ne: true } });
     return { totalCategories: result.length };
   }
 
@@ -220,7 +220,7 @@ class StatsService {
    */
   async getRefundsCount() {
     const count = await Order.countDocuments({
-      isArchived: false,
+      isArchived: { $ne: true },
       OrderStatus: 'Returned',
     });
     return { totalRefunds: count };
@@ -231,7 +231,7 @@ class StatsService {
    */
   async getCancellationsCount() {
     const count = await Order.countDocuments({
-      isArchived: false,
+      isArchived: { $ne: true },
       OrderStatus: 'Cancelled',
     });
     return { totalCancellations: count };
@@ -244,7 +244,7 @@ class StatsService {
     const result = await Order.aggregate([
       {
         $match: {
-          isArchived: false,
+          isArchived: { $ne: true },
           'statusHistory.status': 'Shipped',
         },
       },

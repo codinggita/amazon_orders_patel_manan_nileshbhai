@@ -66,7 +66,7 @@ class OrderService {
       } = query;
 
       // Build filter object
-      const filter = { isArchived: false };
+      const filter = { isArchived: { $ne: true } };
 
       // Regex search across multiple fields
       if (search) {
@@ -149,7 +149,7 @@ class OrderService {
 
       const order = await Order.findOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       });
 
       if (!order) {
@@ -172,7 +172,7 @@ class OrderService {
     try {
       const order = await Order.findOne({
         OrderID,
-        isArchived: false,
+        isArchived: { $ne: true },
       });
 
       if (!order) {
@@ -203,7 +203,7 @@ class OrderService {
       delete updateData.createdAt;
 
       const order = await Order.findOneAndUpdate(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         updateData,
         { new: true, runValidators: true }
       );
@@ -240,7 +240,7 @@ class OrderService {
       delete updateData.createdAt;
 
       const order = await Order.findOneAndUpdate(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         { $set: updateData },
         { new: true, runValidators: true }
       );
@@ -273,7 +273,7 @@ class OrderService {
 
       const result = await Order.deleteOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       });
 
       if (result.deletedCount === 0) {
@@ -298,7 +298,7 @@ class OrderService {
 
       const exists = await Order.findOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       }).lean();
 
       return !!exists;
@@ -319,7 +319,7 @@ class OrderService {
       }
 
       const order = await Order.findOne(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         'OrderID CustomerName ProductName TotalAmount OrderStatus OrderDate'
       ).lean();
 
@@ -346,7 +346,7 @@ class OrderService {
       }
 
       const order = await Order.findOne(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         'ProductID ProductName Brand Category Quantity UnitPrice Discount Tax ShippingCost TotalAmount'
       ).lean();
 
@@ -384,7 +384,7 @@ class OrderService {
       }
 
       const order = await Order.findOne(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         'statusHistory'
       ).lean();
 
@@ -413,7 +413,7 @@ class OrderService {
       }
 
       const order = await Order.findOneAndUpdate(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         {
           $set: { OrderStatus: newStatus },
           $push: {
@@ -450,7 +450,7 @@ class OrderService {
       }
 
       const order = await Order.findOneAndUpdate(
-        { _id: orderId, isArchived: false },
+        { _id: orderId, isArchived: { $ne: true } },
         { $set: { isArchived: true } },
         { new: true }
       );
@@ -508,7 +508,7 @@ class OrderService {
 
       const order = await Order.findOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       });
 
       if (!order) {
@@ -541,7 +541,7 @@ class OrderService {
 
       const originalOrder = await Order.findOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       }).lean();
 
       if (!originalOrder) {
@@ -587,7 +587,7 @@ class OrderService {
 
       const order = await Order.findOne({
         _id: orderId,
-        isArchived: false,
+        isArchived: { $ne: true },
       }).lean();
 
       if (!order) {
