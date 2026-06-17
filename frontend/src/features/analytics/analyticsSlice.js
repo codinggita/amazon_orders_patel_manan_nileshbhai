@@ -1,37 +1,49 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
-const calcTrend = (arr, key) => {
-  if (!arr?.length || arr.length < 2) return null;
-  const last = arr[arr.length - 1][key] || 0;
-  const prev = arr[arr.length - 2][key] || 0;
-  if (!prev) return null;
-  return parseFloat((((last - prev) / prev) * 100).toFixed(1));
+// Helper: safely call an API endpoint and return fallback on failure
+const safeGet = async (url, fallback = null) => {
+  try {
+    const res = await api.get(url);
+    return res.data?.data ?? fallback;
+  } catch {
+    console.warn(`[Analytics] Failed to fetch ${url}`);
+    return fallback;
+  }
 };
 
+// Single thunk that fetches ALL dashboard data with individual error handling
+// so one broken endpoint doesn't block the entire dashboard
 export const fetchDashboardStats = createAsyncThunk(
   'analytics/fetchDashboardStats',
   async (_, { rejectWithValue }) => {
     try {
-      const [revTotal, ordersTotal, returnRate, sysPerf, revMonthly, ordersMonthly] = await Promise.all([
-        api.get('/stats/revenue/total'),
-        api.get('/stats/orders/total'),
-        api.get('/analytics/returns/rate'),
-        api.get('/stats/system/performance'),
-        api.get('/stats/revenue/monthly'),
-        api.get('/stats/orders/monthly'),
+      const [
+        revTotal,
+        ordersCount,
+        returnRate,
+        sysPerf,
+        avgOrderValue,
+        paymentDist,
+        recentOrders,
+      ] = await Promise.all([
+        safeGet('/stats/revenue/total', {}),
+        safeGet('/analytics/orders/count', {}),
+        safeGet('/analytics/returns/rate', {}),
+        safeGet('/stats/system/performance', {}),
+        safeGet('/analytics/orders/average-value', {}),
+        safeGet('/analytics/payments/distribution', []),
+        safeGet('/orders/recent?page=1&limit=5', []),
       ]);
 
-      const revArr = revMonthly.data?.data || [];
-      const ordArr = ordersMonthly.data?.data || [];
-
       return {
-        revenue: revTotal.data?.data || {},
-        orders: ordersTotal.data?.data || {},
-        returnRate: returnRate.data?.data || {},
-        system: sysPerf.data?.data || {},
-        revenueTrend: calcTrend(revArr, 'revenue'),
-        ordersTrend: calcTrend(ordArr, 'count'),
+        revenue: revTotal,
+        orders: ordersCount,
+        returnRate: returnRate,
+        system: sysPerf,
+        averageOrderValue: avgOrderValue,
+        paymentDistribution: paymentDist,
+        recentOrders: Array.isArray(recentOrders) ? recentOrders : [],
       };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch dashboard stats');
@@ -39,34 +51,50 @@ export const fetchDashboardStats = createAsyncThunk(
   }
 );
 
-export const fetchRevenueTrends = createAsyncThunk(
-  'analytics/fetchRevenueTrends',
+// Separate thunk for order status breakdown (for the pie chart)
+export const fetchOrderStatusBreakdown = createAsyncThunk(
+  'analytics/fetchOrderStatusBreakdown',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/analytics/revenue/monthly');
-      return response.data?.data || [];
+      const response = await api.get('/analytics/orders/count');
+      return response.data?.data || {};
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch revenue trends');
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch order status breakdown');
     }
   }
 );
 
-export const fetchRecentOrders = createAsyncThunk(
-  'analytics/fetchRecentOrders',
+// Separate thunk for payment distribution (for the bar chart)
+export const fetchPaymentDistribution = createAsyncThunk(
+  'analytics/fetchPaymentDistribution',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/orders/recent', { params: { page: 1, limit: 5, sort: '-date' } });
+      const response = await api.get('/analytics/payments/distribution');
       return response.data?.data || [];
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch recent orders');
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch payment distribution');
+    }
+  }
+);
+
+// Fetch return rate breakdown by category (for category chart)
+export const fetchReturnsByCategory = createAsyncThunk(
+  'analytics/fetchReturnsByCategory',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/analytics/returns/rate');
+      return response.data?.data || {};
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch returns by category');
     }
   }
 );
 
 const initialState = {
   dashboardStats: null,
-  revenueTrends: [],
-  recentOrders: [],
+  orderStatusBreakdown: null,
+  paymentDistribution: [],
+  returnsByCategory: null,
   status: 'idle',
   error: null,
 };
@@ -86,11 +114,14 @@ const analyticsSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      .addCase(fetchRevenueTrends.fulfilled, (state, action) => {
-        state.revenueTrends = action.payload;
+      .addCase(fetchOrderStatusBreakdown.fulfilled, (state, action) => {
+        state.orderStatusBreakdown = action.payload;
       })
-      .addCase(fetchRecentOrders.fulfilled, (state, action) => {
-        state.recentOrders = action.payload;
+      .addCase(fetchPaymentDistribution.fulfilled, (state, action) => {
+        state.paymentDistribution = action.payload;
+      })
+      .addCase(fetchReturnsByCategory.fulfilled, (state, action) => {
+        state.returnsByCategory = action.payload;
       });
   },
 });
