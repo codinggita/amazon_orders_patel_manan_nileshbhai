@@ -17,6 +17,13 @@ import adminRoutes from './routes/admin.routes.js';
 import bulkRoutes from './routes/bulk.routes.js';
 import errorRoutes from './routes/error.routes.js';
 import validateRoutes from './routes/validate.routes.js';
+import recommendationsRoutes from './routes/recommendations.routes.js';
+import trendingRoutes from './routes/trending.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import activityRoutes from './routes/activity.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
+import systemRoutes from './routes/system.routes.js';
+import metaRoutes from './routes/meta.routes.js';
 
 
 // Middlewares
@@ -32,7 +39,7 @@ app.use(
   cors({
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
@@ -89,6 +96,17 @@ app.use('/api/v1/errors', errorRoutes);
 
 // Validation Routes
 app.use('/api/v1/validate', validateRoutes);
+
+// Advanced Routes
+app.use('/api/v1/recommendations', recommendationsRoutes);
+app.use('/api/v1/trending', trendingRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/activity', activityRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/system', systemRoutes);
+
+// HEAD & OPTIONS Routes (must be before 404 handler)
+app.use('/api/v1', metaRoutes);
 
 // 404 Handler
 app.use(notFoundHandler);
