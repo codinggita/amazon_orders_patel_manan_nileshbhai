@@ -6,6 +6,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ViewInArIcon from '@mui/icons-material/ViewInAr';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon, role: 'any' },
@@ -26,13 +27,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const filteredNavigation = navigation.filter((item) => item.role === 'any' || item.role === role);
 
   const SidebarContent = () => (
-    <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
-      <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-        <div className="flex items-center flex-shrink-0 px-4">
-          {/* Logo Placeholder */}
-          <span className="text-indigo-600 font-bold text-xl tracking-tight">Amazon Orders</span>
+    <div className="flex-1 flex flex-col min-h-0 bg-premium-darker border-r border-white/5 shadow-2xl">
+      <div className="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto custom-scrollbar">
+        <div className="flex items-center flex-shrink-0 px-6 mb-6">
+          <div className="w-8 h-8 rounded bg-gradient-to-br from-premium-accent to-indigo-700 flex items-center justify-center mr-3 shadow-lg shadow-premium-accent/30">
+            <ViewInArIcon className="text-white w-5 h-5" />
+          </div>
+          <span className="text-white font-bold text-xl tracking-tight">NexAdmin</span>
         </div>
-        <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
+        <nav className="mt-4 flex-1 px-4 space-y-2">
           {filteredNavigation.map((item) => (
             <NavLink
               key={item.name}
@@ -41,8 +44,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 classNames(
-                  isActive ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                  'group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors'
+                  isActive 
+                    ? 'bg-premium-accent/10 text-premium-accent border border-premium-accent/20' 
+                    : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent',
+                  'group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200'
                 )
               }
             >
@@ -50,8 +55,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <>
                   <item.icon
                     className={classNames(
-                      isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500',
-                      'mr-3 flex-shrink-0 h-6 w-6 transition-colors'
+                      isActive ? 'text-premium-accent' : 'text-gray-500 group-hover:text-gray-300',
+                      'mr-3 flex-shrink-0 h-5 w-5 transition-colors duration-200'
                     )}
                     aria-hidden="true"
                   />
@@ -67,23 +72,27 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <>
-      {/* Mobile Sidebar */}
       <Drawer
         variant="temporary"
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        ModalProps={{ keepMounted: true }} // Better open performance on mobile
+        ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 256 },
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box', 
+            width: 280,
+            backgroundColor: '#06090F',
+            backgroundImage: 'none',
+            borderRight: '1px solid rgba(255,255,255,0.05)'
+          },
         }}
       >
         <SidebarContent />
       </Drawer>
 
-      {/* Desktop Sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64">
+        <div className="flex flex-col w-64 transition-all duration-300 ease-in-out">
           <SidebarContent />
         </div>
       </div>
