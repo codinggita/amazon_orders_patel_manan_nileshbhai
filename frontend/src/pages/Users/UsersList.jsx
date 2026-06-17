@@ -111,8 +111,8 @@ const UsersList = () => {
       </Helmet>
 
       <div className="mb-5">
-        <h1 className="text-xl font-bold text-white">Users</h1>
-        <p className="text-sm mt-0.5" style={{ color: '#475569' }}>Manage roles and platform access</p>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white">Users</h1>
+        <p className="text-sm mt-0.5 text-slate-500 dark:text-[#475569]">Manage roles and platform access</p>
       </div>
 
       <DataTable

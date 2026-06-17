@@ -10,7 +10,7 @@ export const fetchOrders = createAsyncThunk(
     try {
       const response = await api.get('/orders/paged', { params });
       dispatch(setGlobalLoading(false));
-      return response.data.data;
+      return response.data;
     } catch (error) {
       dispatch(setGlobalLoading(false));
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch orders');
@@ -63,7 +63,7 @@ export const deleteOrder = createAsyncThunk(
 // Load initial filters from sessionStorage
 const loadFilters = () => {
   const saved = sessionStorage.getItem('orderFilters');
-  return saved ? JSON.parse(saved) : { search: '', status: '', page: 1, limit: 10 };
+  return saved ? JSON.parse(saved) : { search: '', status: '', page: 1, limit: 10, sort: '-date' };
 };
 
 const initialState = {
@@ -88,7 +88,7 @@ const orderSlice = createSlice({
       sessionStorage.setItem('orderFilters', JSON.stringify(state.filters));
     },
     resetFilters: (state) => {
-      state.filters = { search: '', status: '', page: 1, limit: 10 };
+      state.filters = { search: '', status: '', page: 1, limit: 10, sort: '-date' };
       sessionStorage.setItem('orderFilters', JSON.stringify(state.filters));
     }
   },
@@ -100,12 +100,16 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.orders = action.payload.docs || [];
+        // Depending on backend structure, data is either in action.payload.data (ApiResponse) or directly in payload.
+        const responseData = action.payload.data || [];
+        const responsePagination = action.payload.pagination || {};
+        
+        state.orders = responseData;
         state.pagination = {
-          totalDocs: action.payload.totalDocs,
-          totalPages: action.payload.totalPages,
-          page: action.payload.page,
-          limit: action.payload.limit,
+          totalDocs: responsePagination.totalRecords || 0,
+          totalPages: responsePagination.totalPages || 0,
+          page: responsePagination.currentPage || 1,
+          limit: responsePagination.limit || 10,
         };
       })
       .addCase(fetchOrders.rejected, (state, action) => {

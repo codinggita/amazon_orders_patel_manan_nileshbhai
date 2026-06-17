@@ -7,7 +7,7 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: '#080B14' }}>
+    <div className="h-screen flex overflow-hidden bg-slate-50 dark:bg-[#050505] transition-colors duration-200">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div className="flex flex-col flex-1 overflow-hidden">
