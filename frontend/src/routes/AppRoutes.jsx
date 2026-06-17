@@ -1,0 +1,44 @@
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+import AuthLayout from '../layouts/AuthLayout';
+import DashboardLayout from '../layouts/DashboardLayout';
+
+import PublicRoute from './guards/PublicRoute';
+import ProtectedRoute from './guards/ProtectedRoute';
+import AdminRoute from './guards/AdminRoute';
+
+const Login = lazy(() => import('../pages/Login'));
+const Register = lazy(() => import('../pages/Register'));
+const DashboardOverview = lazy(() => import('../pages/DashboardOverview'));
+const Profile = lazy(() => import('../pages/Profile'));
+
+export default function AppRoutes() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center text-indigo-600">Loading...</div>}>
+      <Routes>
+        {/* Public Routes */}
+        <Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        {/* Protected Dashboard Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route index element={<DashboardOverview />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<div>Settings Component Placeholder</div>} />
+          <Route path="orders" element={<div>Orders CRUD Placeholder</div>} />
+          
+          <Route path="users" element={<AdminRoute><div>Users Management Placeholder</div></AdminRoute>} />
+        </Route>
+
+        {/* Redirect root to dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </Suspense>
+  );
+}
