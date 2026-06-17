@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiMenu, FiBell, FiSearch, FiChevronRight } from 'react-icons/fi';
+import ThemeToggle from './common/ThemeToggle';
 
 const PAGE_NAMES = {
   '': 'Overview',
-  'orders': 'Orders',
-  'users': 'Users',
+  'orders': 'All Orders',
+  'users': 'Customers',
   'profile': 'Profile',
   'settings': 'Settings',
+  'search': 'Search',
+  'analytics': 'Analytics',
+  'stats': 'Statistics',
 };
 
 const Navbar = ({ setSidebarOpen }) => {
@@ -22,84 +26,75 @@ const Navbar = ({ setSidebarOpen }) => {
 
   return (
     <header
-      className="flex-shrink-0 flex items-center justify-between h-14 px-4 sm:px-6"
-      style={{
-        background: 'rgba(8,11,20,0.8)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-      }}
+      className="flex-shrink-0 flex items-center justify-between h-16 px-4 sm:px-6 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md border-b border-slate-200 dark:border-rose-500/10 relative z-20"
     >
       {/* Left: hamburger + breadcrumb */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="lg:hidden p-1.5 rounded-lg transition-colors"
-          style={{ color: '#475569' }}
+          className="lg:hidden p-2 rounded-xl transition-colors text-slate-500 hover:bg-slate-100 dark:hover:bg-rose-500/10"
         >
-          <FiMenu size={18} />
+          <FiMenu size={20} />
         </button>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-sm">
-          <span style={{ color: '#334155' }}>Dashboard</span>
-          {segments.length > 0 && (
+        <div className="hidden sm:flex items-center gap-2 text-sm font-semibold tracking-wide">
+          <span className="text-slate-500 dark:text-rose-500/60 uppercase">Dashboard</span>
+          {segments.length >= 0 && (
             <>
-              <FiChevronRight size={12} style={{ color: '#1E293B' }} />
-              <span className="font-medium" style={{ color: '#94A3B8' }}>{currentPage}</span>
+              <FiChevronRight size={14} className="text-slate-300 dark:text-slate-700" />
+              <span className="text-slate-800 dark:text-slate-300 capitalize">{currentPage}</span>
             </>
           )}
         </div>
       </div>
 
-      {/* Right: search + bell + avatar */}
-      <div className="flex items-center gap-2">
+      {/* Right: Search, Live Badge, Theme, Bell, Avatar */}
+      <div className="flex items-center gap-3">
+        {/* Live Badge */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Live</span>
+        </div>
+
         {/* Search */}
-        <div className={`relative transition-all duration-200 ${showSearch ? 'w-52' : 'w-8'}`}>
+        <div className={`relative transition-all duration-300 ${showSearch ? 'w-48 sm:w-64' : 'w-10'}`}>
           {showSearch ? (
             <div className="relative">
-              <FiSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" size={13} style={{ color: '#475569' }} />
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" size={14} />
               <input
                 autoFocus
                 type="text"
                 placeholder="Search..."
                 onBlur={() => setShowSearch(false)}
-                className="w-full text-xs py-2 pl-8 pr-3 rounded-lg outline-none text-white placeholder-slate-600"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                className="w-full text-sm py-2 pl-9 pr-3 rounded-full outline-none bg-slate-100 dark:bg-[#0a0a0a] border border-slate-200 dark:border-rose-500/20 text-slate-800 dark:text-white placeholder-slate-400 focus:border-rose-500/50 focus:shadow-[0_0_15px_rgba(225,29,72,0.1)] transition-all"
               />
             </div>
           ) : (
             <button
               onClick={() => setShowSearch(true)}
-              className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
-              style={{ color: '#475569' }}
+              className="flex items-center justify-center w-10 h-10 rounded-full transition-colors text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-rose-500/10"
             >
-              <FiSearch size={15} />
+              <FiSearch size={16} />
             </button>
           )}
         </div>
 
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
         {/* Bell */}
-        <button className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-colors" style={{ color: '#475569' }}>
-          <FiBell size={15} />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full" style={{ background: '#6366F1' }} />
+        <button className="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-rose-500/10">
+          <FiBell size={18} />
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)] border-2 border-white dark:border-[#050505]" />
         </button>
 
-        {/* Divider */}
-        <div className="w-px h-5 mx-1" style={{ background: 'rgba(255,255,255,0.06)' }} />
-
-        {/* Avatar */}
+        {/* Avatar Mobile Only (Desktop is in sidebar) */}
         <button
           onClick={() => navigate('/dashboard/profile')}
-          className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-lg transition-colors hover:bg-white/[0.03]"
+          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-300 text-sm font-bold text-slate-800 shadow-inner border border-slate-300 dark:border-slate-400 ml-1"
         >
-          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)' }}>
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <div className="hidden sm:block text-left">
-            <p className="text-xs font-semibold text-white leading-none">{user?.name?.split(' ')[0] || 'User'}</p>
-            <p className="text-[10px] mt-0.5 capitalize" style={{ color: '#475569' }}>{user?.role}</p>
-          </div>
+          {user?.name?.charAt(0).toUpperCase() || 'U'}
         </button>
       </div>
     </header>

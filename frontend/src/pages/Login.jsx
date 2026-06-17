@@ -24,7 +24,7 @@ const Login = () => {
   });
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#080B14' }}>
+    <div className="min-h-screen flex bg-slate-50 dark:bg-[#080B14] transition-colors duration-200">
       <Helmet>
         <title>Sign In | Amazon Orders Dashboard</title>
       </Helmet>
@@ -102,8 +102,7 @@ const Login = () => {
       </div>
 
       {/* Right — Form Panel */}
-      <div className="w-full lg:w-[48%] flex items-center justify-center px-6 py-12"
-        style={{ background: '#080B14' }}>
+      <div className="w-full lg:w-[48%] flex items-center justify-center px-6 py-12 bg-white dark:bg-[#080B14]">
         <div className="w-full max-w-[400px]" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-10 lg:hidden">
@@ -115,8 +114,8 @@ const Login = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-1.5">Welcome back</h2>
-            <p className="text-sm" style={{ color: '#64748B' }}>Sign in to your dashboard account</p>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Welcome back</h2>
+            <p className="text-sm text-slate-500 dark:text-[#64748B]">Sign in to your dashboard account</p>
           </div>
 
           {error && (
@@ -129,11 +128,11 @@ const Login = () => {
 
           <form onSubmit={formik.handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: '#94A3B8' }}>
+              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
                 Email Address
               </label>
               <div className="relative">
-                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" size={15} style={{ color: '#475569' }} />
+                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#475569]" size={15} />
                 <input
                   id="email"
                   type="email"
@@ -150,16 +149,15 @@ const Login = () => {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider" style={{ color: '#94A3B8' }}>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
                   Password
                 </label>
-                <Link to="/forgot-password" className="text-xs font-medium transition-colors"
-                  style={{ color: '#6366F1' }}>
+                <Link to="/forgot-password" className="text-xs font-medium transition-colors text-indigo-600 dark:text-[#6366F1]">
                   Forgot password?
                 </Link>
               </div>
               <div className="relative">
-                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" size={15} style={{ color: '#475569' }} />
+                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#475569]" size={15} />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -169,8 +167,7 @@ const Login = () => {
                   style={formik.touched.password && formik.errors.password ? { borderColor: 'rgba(239,68,68,0.4)' } : {}}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors"
-                  style={{ color: '#475569' }}>
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors text-slate-500 dark:text-[#475569]">
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
@@ -196,9 +193,9 @@ const Login = () => {
             </div>
           </form>
 
-          <p className="mt-6 text-center text-sm" style={{ color: '#475569' }}>
+          <p className="mt-6 text-center text-sm text-slate-500 dark:text-[#475569]">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold transition-colors" style={{ color: '#818CF8' }}>
+            <Link to="/register" className="font-semibold transition-colors text-indigo-600 dark:text-[#818CF8]">
               Create one free
             </Link>
           </p>

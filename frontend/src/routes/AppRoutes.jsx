@@ -14,6 +14,7 @@ const DashboardOverview = lazy(() => import('../pages/DashboardOverview'));
 const Profile = lazy(() => import('../pages/Profile'));
 const OrdersList = lazy(() => import('../pages/Orders/OrdersList'));
 const UsersList = lazy(() => import('../pages/Users/UsersList'));
+const SearchPage = lazy(() => import('../pages/SearchPage'));
 
 export default function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export default function AppRoutes() {
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<div>Settings Component Placeholder</div>} />
           <Route path="orders" element={<OrdersList />} />
+          <Route path="search" element={<SearchPage />} />
           
           <Route path="users" element={<AdminRoute><UsersList /></AdminRoute>} />
         </Route>

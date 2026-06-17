@@ -38,14 +38,13 @@ const Register = () => {
   ];
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#080B14' }}>
+    <div className="min-h-screen flex bg-slate-50 dark:bg-[#080B14] transition-colors duration-200">
       <Helmet>
         <title>Create Account | Amazon Orders Dashboard</title>
       </Helmet>
 
       {/* Left — Form Panel */}
-      <div className="w-full lg:w-[48%] flex items-center justify-center px-6 py-12"
-        style={{ background: '#080B14' }}>
+      <div className="w-full lg:w-[48%] flex items-center justify-center px-6 py-12 bg-white dark:bg-[#080B14]">
         <div className="w-full max-w-[400px]" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-10 lg:hidden">
@@ -57,8 +56,8 @@ const Register = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-1.5">Create your account</h2>
-            <p className="text-sm" style={{ color: '#64748B' }}>Start managing orders in minutes</p>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Create account</h2>
+            <p className="text-sm text-slate-500 dark:text-[#64748B]">Start managing your operations today</p>
           </div>
 
           {error && (
@@ -72,11 +71,11 @@ const Register = () => {
           <form onSubmit={formik.handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: '#94A3B8' }}>
+              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
                 Full Name
               </label>
               <div className="relative">
-                <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" size={15} style={{ color: '#475569' }} />
+                <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#475569]" size={15} />
                 <input
                   id="name" type="text" placeholder="Manan Patel"
                   {...formik.getFieldProps('name')}
@@ -91,11 +90,11 @@ const Register = () => {
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: '#94A3B8' }}>
+              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
                 Email Address
               </label>
               <div className="relative">
-                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" size={15} style={{ color: '#475569' }} />
+                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#475569]" size={15} />
                 <input
                   id="email" type="email" placeholder="you@example.com"
                   {...formik.getFieldProps('email')}
@@ -110,11 +109,11 @@ const Register = () => {
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: '#94A3B8' }}>
+              <label className="block text-xs font-semibold mb-2 uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
                 Password
               </label>
               <div className="relative">
-                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" size={15} style={{ color: '#475569' }} />
+                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#475569]" size={15} />
                 <input
                   id="password" type={showPassword ? 'text' : 'password'} placeholder="Min. 6 characters"
                   {...formik.getFieldProps('password')}
@@ -122,8 +121,7 @@ const Register = () => {
                   style={formik.touched.password && formik.errors.password ? { borderColor: 'rgba(239,68,68,0.4)' } : {}}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors"
-                  style={{ color: '#475569' }}>
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors text-slate-500 dark:text-[#475569]">
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
@@ -149,10 +147,10 @@ const Register = () => {
             </div>
           </form>
 
-          <p className="mt-6 text-center text-sm" style={{ color: '#475569' }}>
+          <p className="mt-6 text-center text-sm text-slate-500 dark:text-[#475569]">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold transition-colors" style={{ color: '#818CF8' }}>
-              Sign in
+            <Link to="/login" className="font-semibold transition-colors text-indigo-600 dark:text-[#818CF8]">
+              Sign in instead
             </Link>
           </p>
         </div>
