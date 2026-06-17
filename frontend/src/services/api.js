@@ -22,7 +22,24 @@ api.interceptors.request.use(
 // Response Interceptor
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config;
+    
+    // Initialize retry count if not present
+    if (config && config.retryCount === undefined) {
+      config.retryCount = 0;
+    }
+
+    // Determine if we should retry (Network error or 5xx status)
+    const shouldRetry = !error.response || (error.response.status >= 500 && error.response.status <= 599);
+    
+    if (config && shouldRetry && config.retryCount < 2) {
+      config.retryCount += 1;
+      // Exponential backoff: 1s, 2s...
+      await new Promise(resolve => setTimeout(resolve, 1000 * config.retryCount));
+      return api(config);
+    }
+
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       window.dispatchEvent(new Event('auth:unauthorized'));

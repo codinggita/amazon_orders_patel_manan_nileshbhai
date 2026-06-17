@@ -41,8 +41,8 @@ const DashboardOverview = () => {
       <div className="glassmorphism p-6 rounded-2xl bg-gradient-to-r from-premium-accent/20 to-transparent border-l-4 border-l-premium-accent">
         <h2 className="text-2xl font-bold text-white mb-2">Welcome back, {user?.name || 'Administrator'}! 👋</h2>
         <p className="text-gray-400 text-sm">
-          {isAdmin 
-            ? "Here's what's happening with your store today." 
+          {isAdmin
+            ? "Here's what's happening with your store today."
             : "Track your orders and manage your account."}
         </p>
       </div>
@@ -51,32 +51,32 @@ const DashboardOverview = () => {
         <>
           {/* Admin Stats Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard 
-              title="Total Revenue" 
-              value="$45,231" 
-              icon={<AttachMoneyIcon />} 
-              trend={12.5} 
+            <StatCard
+              title="Total Revenue"
+              value="$45,231"
+              icon={<AttachMoneyIcon />}
+              trend={12.5}
               colorClass="bg-green-500 text-green-400"
             />
-            <StatCard 
-              title="Active Orders" 
-              value="156" 
-              icon={<ShoppingCartIcon />} 
-              trend={-2.4} 
+            <StatCard
+              title="Active Orders"
+              value="156"
+              icon={<ShoppingCartIcon />}
+              trend={-2.4}
               colorClass="bg-blue-500 text-blue-400"
             />
-            <StatCard 
-              title="Delivered" 
-              value="1,423" 
-              icon={<LocalShippingIcon />} 
-              trend={8.2} 
+            <StatCard
+              title="Delivered"
+              value="1,423"
+              icon={<LocalShippingIcon />}
+              trend={8.2}
               colorClass="bg-purple-500 text-purple-400"
             />
-            <StatCard 
-              title="Conversion" 
-              value="3.2%" 
-              icon={<TrendingUpIcon />} 
-              trend={1.1} 
+            <StatCard
+              title="Conversion"
+              value="3.2%"
+              icon={<TrendingUpIcon />}
+              trend={1.1}
               colorClass="bg-orange-500 text-orange-400"
             />
           </div>
@@ -101,34 +101,34 @@ const DashboardOverview = () => {
         <>
           {/* User Specific View */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <StatCard 
-              title="Total Orders" 
-              value="12" 
-              icon={<ShoppingCartIcon />} 
-              trend={5} 
+            <StatCard
+              title="Total Orders"
+              value="12"
+              icon={<ShoppingCartIcon />}
+              trend={5}
               colorClass="bg-blue-500 text-blue-400"
             />
-            <StatCard 
-              title="Pending Delivery" 
-              value="2" 
-              icon={<LocalShippingIcon />} 
-              trend={0} 
+            <StatCard
+              title="Pending Delivery"
+              value="2"
+              icon={<LocalShippingIcon />}
+              trend={0}
               colorClass="bg-orange-500 text-orange-400"
             />
-            <StatCard 
-              title="Total Spent" 
-              value="$1,240" 
-              icon={<AttachMoneyIcon />} 
-              trend={12} 
+            <StatCard
+              title="Total Spent"
+              value="$1,240"
+              icon={<AttachMoneyIcon />}
+              trend={12}
               colorClass="bg-green-500 text-green-400"
             />
           </div>
 
           <div className="glassmorphism-dark rounded-2xl p-6 min-h-[300px]">
-             <h3 className="text-lg font-semibold text-white mb-4">My Recent Orders</h3>
-             <div className="h-full flex items-center justify-center border border-dashed border-white/10 rounded-xl">
-               <p className="text-gray-500">Orders Table Placeholder</p>
-             </div>
+            <h3 className="text-lg font-semibold text-white mb-4">My Recent Orders</h3>
+            <div className="h-full flex items-center justify-center border border-dashed border-white/10 rounded-xl">
+              <p className="text-gray-500">Orders Table Placeholder</p>
+            </div>
           </div>
         </>
       )}

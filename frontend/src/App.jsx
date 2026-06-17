@@ -9,6 +9,8 @@ import { store } from './store/store';
 import { fetchProfile, logoutLocally } from './features/auth/authSlice';
 import AppRoutes from './routes/AppRoutes';
 
+import GlobalLoader from './components/common/GlobalLoader';
+
 const AppContent = () => {
   const dispatch = useDispatch();
 
@@ -25,7 +27,12 @@ const AppContent = () => {
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, [dispatch]);
 
-  return <AppRoutes />;
+  return (
+    <>
+      <GlobalLoader />
+      <AppRoutes />
+    </>
+  );
 };
 
 function App() {

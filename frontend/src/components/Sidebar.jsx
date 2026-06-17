@@ -1,101 +1,134 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import Drawer from '@mui/material/Drawer';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import PeopleIcon from '@mui/icons-material/People';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ViewInArIcon from '@mui/icons-material/ViewInAr';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutUser } from '../features/auth/authSlice';
+import {
+  FiGrid,
+  FiShoppingBag,
+  FiUsers,
+  FiSettings,
+  FiLogOut,
+  FiChevronRight,
+  FiPackage,
+} from 'react-icons/fi';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon, role: 'any' },
-  { name: 'My Orders', href: '/dashboard/orders', icon: ListAltIcon, role: 'user' },
-  { name: 'All Orders', href: '/dashboard/orders', icon: ListAltIcon, role: 'admin' },
-  { name: 'Users', href: '/dashboard/users', icon: PeopleIcon, role: 'admin' },
-  { name: 'Settings', href: '/dashboard/settings', icon: SettingsIcon, role: 'any' },
+const navItems = [
+  { name: 'Overview', href: '/dashboard', icon: FiGrid, end: true, role: 'any' },
+  { name: 'All Orders', href: '/dashboard/orders', icon: FiShoppingBag, role: 'any' },
+  { name: 'Users', href: '/dashboard/users', icon: FiUsers, role: 'admin' },
+  { name: 'Settings', href: '/dashboard/settings', icon: FiSettings, role: 'any' },
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
-
-export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const role = user?.role || 'user';
 
-  const filteredNavigation = navigation.filter((item) => item.role === 'any' || item.role === role);
+  const filtered = navItems.filter((i) => i.role === 'any' || i.role === role);
 
-  const SidebarContent = () => (
-    <div className="flex-1 flex flex-col min-h-0 bg-premium-darker border-r border-white/5 shadow-2xl">
-      <div className="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto custom-scrollbar">
-        <div className="flex items-center flex-shrink-0 px-6 mb-6">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-premium-accent to-indigo-700 flex items-center justify-center mr-3 shadow-lg shadow-premium-accent/30">
-            <ViewInArIcon className="text-white w-5 h-5" />
-          </div>
-          <span className="text-white font-bold text-xl tracking-tight">NexAdmin</span>
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    navigate('/login');
+  };
+
+  const NavContent = () => (
+    <div className="flex flex-col h-full" style={{ background: '#0B0F1A', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-5 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)' }}>
+          <FiPackage className="text-white" size={16} />
         </div>
-        <nav className="mt-4 flex-1 px-4 space-y-2">
-          {filteredNavigation.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.href}
-              end={item.href === '/dashboard'}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                classNames(
-                  isActive 
-                    ? 'bg-premium-accent/10 text-premium-accent border border-premium-accent/20' 
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent',
-                  'group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <item.icon
-                    className={classNames(
-                      isActive ? 'text-premium-accent' : 'text-gray-500 group-hover:text-gray-300',
-                      'mr-3 flex-shrink-0 h-5 w-5 transition-colors duration-200'
-                    )}
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+        <div>
+          <p className="text-white font-bold text-sm tracking-tight">OrderFlow</p>
+          <p className="text-xs" style={{ color: '#334155' }}>Dashboard</p>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        <p className="text-[10px] font-bold uppercase tracking-widest px-3 mb-3" style={{ color: '#334155' }}>
+          Menu
+        </p>
+        {filtered.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.href}
+            end={item.end}
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                isActive ? 'text-white' : 'hover:text-slate-200 text-slate-500'
+              }`
+            }
+            style={({ isActive }) => isActive ? {
+              background: 'rgba(99,102,241,0.12)',
+              color: '#818CF8'
+            } : {}}
+          >
+            {({ isActive }) => (
+              <>
+                <item.icon size={16} className={`flex-shrink-0 transition-colors ${isActive ? 'text-indigo-400' : 'text-slate-600 group-hover:text-slate-400'}`} />
+                <span className="flex-1">{item.name}</span>
+                {isActive && <FiChevronRight size={12} style={{ color: '#6366F1' }} />}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* User & Logout */}
+      <div className="px-3 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="flex items-center gap-3 px-3 py-3 rounded-lg mb-2"
+          style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)' }}>
+            {user?.name?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-white truncate">{user?.name || 'User'}</p>
+            <p className="text-xs capitalize" style={{ color: '#475569' }}>{user?.role || 'user'}</p>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 text-slate-500 hover:text-red-400 group"
+          style={{ ':hover': { background: 'rgba(239,68,68,0.06)' } }}
+        >
+          <FiLogOut size={15} className="flex-shrink-0 group-hover:text-red-400 transition-colors" />
+          Sign Out
+        </button>
       </div>
     </div>
   );
 
   return (
     <>
-      <Drawer
-        variant="temporary"
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { 
-            boxSizing: 'border-box', 
-            width: 280,
-            backgroundColor: '#06090F',
-            backgroundImage: 'none',
-            borderRight: '1px solid rgba(255,255,255,0.05)'
-          },
-        }}
-      >
-        <SidebarContent />
-      </Drawer>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 lg:hidden"
+          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-      <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64 transition-all duration-300 ease-in-out">
-          <SidebarContent />
+      {/* Mobile drawer */}
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out lg:hidden ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <NavContent />
+      </div>
+
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="w-56 flex flex-col">
+          <NavContent />
         </div>
       </div>
     </>
   );
-}
+};
+
+export default Sidebar;
