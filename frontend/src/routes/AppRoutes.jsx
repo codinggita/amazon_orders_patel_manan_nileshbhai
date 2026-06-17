@@ -12,6 +12,8 @@ const Login = lazy(() => import('../pages/Login'));
 const Register = lazy(() => import('../pages/Register'));
 const DashboardOverview = lazy(() => import('../pages/DashboardOverview'));
 const Profile = lazy(() => import('../pages/Profile'));
+const OrdersList = lazy(() => import('../pages/Orders/OrdersList'));
+const UsersList = lazy(() => import('../pages/Users/UsersList'));
 
 export default function AppRoutes() {
   return (
@@ -28,9 +30,9 @@ export default function AppRoutes() {
           <Route index element={<DashboardOverview />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<div>Settings Component Placeholder</div>} />
-          <Route path="orders" element={<div>Orders CRUD Placeholder</div>} />
+          <Route path="orders" element={<OrdersList />} />
           
-          <Route path="users" element={<AdminRoute><div>Users Management Placeholder</div></AdminRoute>} />
+          <Route path="users" element={<AdminRoute><UsersList /></AdminRoute>} />
         </Route>
 
         {/* Redirect root to dashboard */}
